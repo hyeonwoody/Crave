@@ -1,0 +1,5 @@
+/build
+.vscode/
+CMakeList.txt
+Makefile
+Crave
