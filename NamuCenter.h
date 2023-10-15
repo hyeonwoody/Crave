@@ -28,4 +28,7 @@ public :
 
     std::vector<std::string> vfront;
     std::vector<std::string> vback;
+
+protected :
+    bool m_threadActive;
 };

@@ -308,13 +308,13 @@ std::string getHtml(const std::string& url) {
 
     CURL* curl = curl_easy_init();
     if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CurlWriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &html);
+        // curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        // curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CurlWriteCallback);
+        // curl_easy_setopt(curl, CURLOPT_WRITEDATA, &html);
 
-        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-        curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, CurlDebugCallback);
-        curl_easy_setopt(curl, CURLOPT_DEBUGDATA, NULL);        
+        // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+        // curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, CurlDebugCallback);
+        // curl_easy_setopt(curl, CURLOPT_DEBUGDATA, NULL);        
 
         CURLcode res = curl_easy_perform(curl);
         if (res != CURLE_OK) {
@@ -332,29 +332,11 @@ std::string getHtml(const std::string& url) {
 
 
 
-bool CNamuStep::Start()
-{
-    m_threadActive = true;
-    this->ThreadMain();
-    return true;
-}
-
-bool CNamuStep::Stop()
-{
-    return true;
-}
 
 
 
-void CNamuStep::ThreadMain()
-{
-    while (m_threadActive)
-    {
-        currentTarget->m_url = MakeUrl(currentTarget->m_name); 
-        currentTarget->m_link = MakeLinks(currentTarget->m_url);
-    }
-    int a = 0;
-}
+
+
 
 int main(int argc, char* argv[]) {
 
