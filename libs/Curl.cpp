@@ -1,7 +1,52 @@
 #include <string>
 #include <iostream>
+#include <regex>
 #include <curl/curl.h>
 #include "../NamuStep.h"
+
+inline char from_hex(char ch) {
+    return isdigit(ch) ? ch - '0' : tolower(ch) - 'a' + 10;
+}
+
+static size_t CurlWriteFrontCallback(void* contents, size_t size, size_t nmemb, std::string* output) {
+    // size_t totalSize = size * nmemb;
+
+    //std::regex hrefRegex("href=['\"](/w/[^'\"]*)['\"]");
+    std::regex hrefRegex("href=['\"]/w/([^'\"]*)['\"]");
+    CNamuStep::NamuPage *data = (CNamuStep::NamuPage *)output;
+    
+    size_t totalSize = size * nmemb;
+    std::string html = static_cast<char*> (contents);
+    std::smatch match;
+    std::string::const_iterator searchStart(html.cbegin());
+    std::vector<std::string> hrefValues;
+    
+    while (std::regex_search(searchStart, html.cend(), match, hrefRegex)) {
+        if (match.size() == 2) {
+            hrefValues.push_back(match[1]);
+            std::string input = match[1];
+            std::string result;
+            for (size_t i = 0; i < match[1].length(); i++) {
+                if (input[i] == '%') {
+                    if (i + 2 < input.length()) {
+                        char decoded_char = (from_hex(input[i + 1]) << 4) | from_hex(input[i + 2]);
+                        result += decoded_char;
+                        i += 2;
+                    }
+                } else if (input[i] == '+') {
+                    result += ' ';
+                } else {
+                    result += input[i];
+                }
+            }
+            data->m_link.insert(result);
+        }
+        searchStart = match.suffix().first;
+    }
+    
+    //output->append(static_cast<char*>(contents), totalSize);
+    return totalSize;
+}
 
 static size_t CurlWriteCallback(void* contents, size_t size, size_t nmemb, std::string* output) {
     // size_t totalSize = size * nmemb;

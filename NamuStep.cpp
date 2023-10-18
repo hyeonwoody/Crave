@@ -53,7 +53,7 @@ std::string CNamuBackStep::MakeUrl(std::string name)
     return prefix + name;
 } 
 
-std::vector<std::string> CNamuBackStep::MakeLinks (std::string url)  {
+bool CNamuBackStep::MakeLinks (std::string url)  {
     m_curl = curl_easy_init();
      std::vector<std::string> a;
     if (m_curl)
@@ -61,7 +61,7 @@ std::vector<std::string> CNamuBackStep::MakeLinks (std::string url)  {
         curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
     }
     else {
-        return a;
+        return false;
     }
         
         curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, CurlWriteCallback);
@@ -73,7 +73,7 @@ std::vector<std::string> CNamuBackStep::MakeLinks (std::string url)  {
 
         CURLcode res = curl_easy_perform(m_curl);
     
-        return a;   
+        return true;   
 }
 
 // std::string CNamuFrontStep::MakeUrl(std::string name)

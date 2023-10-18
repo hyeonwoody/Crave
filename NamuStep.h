@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include <memory>
 #include <curl/curl.h>
 
@@ -21,7 +22,7 @@ public:
         std::string m_url;
         std::string* m_html;
         int64_t transferedSize;
-        std::vector<std::string> m_link;
+        std::set<std::string> m_link;
         NamuPage* prev;
         NamuPage* next;
     };
@@ -52,11 +53,11 @@ public:
         while (m_threadActive)
         {
             currentTarget->m_url = MakeUrl(currentTarget->m_name); 
-            currentTarget->m_link = MakeLinks(currentTarget->m_url);
+            MakeLinks(currentTarget->m_url);
         }
     }
     std::string MakeUrl(std::string name);
-    std::vector<std::string> MakeLinks (std::string url);
+    bool MakeLinks (std::string url);
     
 protected:
     CURL* m_curl;
@@ -77,12 +78,12 @@ public:
         while (m_threadActive)
         {
             currentTarget->m_url = MakeUrl(currentTarget->m_name); 
-            currentTarget->m_link = MakeLinks(currentTarget->m_url);
+            MakeLinks(currentTarget->m_url);
         }
     }
 
     std::string MakeUrl(std::string name);
-    std::vector<std::string> MakeLinks (std::string url);
+    bool MakeLinks (std::string url);
 
 protected:
 };
