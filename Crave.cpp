@@ -348,12 +348,18 @@ int main(int argc, char* argv[]) {
     CNamuCenter* namu = new CNamuCenter(argv[1], argv[2]);
 
     namu->Start();
-    namu->Stop();
+    
     // std::string url = "https://namu.wiki/w/%ED%9A%A8%EC%97%B0";
     // std::string html = getHtml(url);
     // std::cout <<html<<std::endl;
     //crawlHtml(html);
+    while (1)
+    {
+        if (namu->m_hThread)
+            continue;
+        else 
+            break;
+    }
     
-    free(namu);
     return 0;
 }

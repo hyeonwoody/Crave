@@ -6,18 +6,18 @@
 
 
 
-bool CNamuStep::Start()
-{
-    m_threadActive = true;
-    //this->ThreadMain();
-    ThreadMain();
-    return true;
-}
+// bool CNamuStep::Start()
+// {
+//     m_threadActive = true;
+//     //this->ThreadMain();
+//     ThreadMain();
+//     return true;
+// }
 
-bool CNamuStep::Stop()
-{
-    return true;
-}
+// bool CNamuStep::Stop()
+// {
+//     return true;
+// }
 
 void CNamuStep::ThreadMain()
 {

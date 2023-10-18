@@ -27,15 +27,24 @@ static size_t CurlWriteFrontCallback(void* contents, size_t size, size_t nmemb, 
             std::string input = match[1];
             std::string result;
             for (size_t i = 0; i < match[1].length(); i++) {
-                if (input[i] == '%') {
+                if (input[i] == '%') 
+                {
                     if (i + 2 < input.length()) {
                         char decoded_char = (from_hex(input[i + 1]) << 4) | from_hex(input[i + 2]);
                         result += decoded_char;
                         i += 2;
                     }
-                } else if (input[i] == '+') {
+                }
+                else if (input[i] == '+') 
+                {
                     result += ' ';
-                } else {
+                } 
+                else if (input[i] == '#')
+                {
+                    break;
+                }
+                else 
+                {
                     result += input[i];
                 }
             }

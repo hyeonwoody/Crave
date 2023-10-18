@@ -5,6 +5,7 @@
 #include <vector>
 #include <set>
 #include <memory>
+#include "./libs/Thread.h"
 #include <curl/curl.h>
 
 
@@ -26,8 +27,9 @@ public:
         NamuPage* prev;
         NamuPage* next;
     };
-    virtual bool Start();
-    virtual bool Stop();
+    // virtual bool Start();
+    // virtual bool Stop();
+
     virtual void ThreadMain();
     bool CurlInit(CURL* pCurl, NamuPage* pNamuPage);
     CURL* m_curl;
@@ -38,22 +40,26 @@ protected:
     bool m_threadActive;
 };
 
-class CNamuFrontStep : public CNamuStep
+class CNamuFrontStep : public CNamuStep, public CThread
 {
 public:
-    CNamuFrontStep(std::string front)
+
+
+    CNamuFrontStep(std::string front) : CThread("FrontStep") 
     {
         currentTarget = new NamuPage();
         currentTarget->m_name = front;
     }
     // Implement the Init and other virtual functions
 
-    virtual void ThreadMain() override {
+    void ThreadMain(){
         // Implement ThreadMain logic
+        m_threadActive = true;
         while (m_threadActive)
         {
             currentTarget->m_url = MakeUrl(currentTarget->m_name); 
             MakeLinks(currentTarget->m_url);
+            
         }
     }
     std::string MakeUrl(std::string name);

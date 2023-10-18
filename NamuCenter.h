@@ -5,7 +5,7 @@
 class CNamuCenter : public CThread
 {
 public:
-    CNamuCenter (std::string front, const std::string back){
+    CNamuCenter (std::string front, const std::string back) : CThread ("NamuCenter"){
         vfront.push_back(front);
         vback.push_back(back);
 
@@ -19,8 +19,6 @@ public :
     
     bool AddPage ();
     bool Found ();
-    virtual bool Start();
-    virtual bool Stop();
     virtual void ThreadMain();
     CNamuFrontStep* frontStep;
     CNamuBackStep* backStep;

@@ -6,7 +6,7 @@ typedef pthread_t ThreadHandle;
 
 class CThread
 {
-private:
+public:
     ThreadHandle m_hThread;
 
 public:
@@ -14,7 +14,7 @@ public:
     virtual void ThreadMain() = 0;
 
     bool Start();
-    void Stop();
+    bool Stop();
     void Close();
 #define THREAD_NAME_MAX 16
     char *m_sName;

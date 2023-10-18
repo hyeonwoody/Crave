@@ -34,13 +34,14 @@ bool CThread::Start()
     }
 }
 
-void CThread::Stop()
+bool CThread::Stop()
 {
     if (this->m_hThread)
     {
         pthread_join(this->m_hThread, NULL);
     }
     this->m_hThread = 0;
+    return true;
 }
 
 void CThread::Close()
