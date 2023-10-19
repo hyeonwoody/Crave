@@ -14,21 +14,16 @@ class CNamuStep
 public:
     CNamuStep()
     {
-        m_threadActive = false;
     }
     
     typedef struct NamuPage
     {
         std::string m_name;
         std::string m_url;
-        std::string* m_html;
-        int64_t transferedSize;
         std::set<std::string> m_link;
         NamuPage* prev;
         NamuPage* next;
     };
-    // virtual bool Start();
-    // virtual bool Stop();
 
     virtual void ThreadMain();
     bool CurlInit(CURL* pCurl, NamuPage* pNamuPage);
@@ -37,7 +32,6 @@ public:
 private:
 
 protected:
-    bool m_threadActive;
 };
 
 class CNamuFrontStep : public CNamuStep, public CThread
@@ -49,17 +43,16 @@ public:
     {
         currentTarget = new NamuPage();
         currentTarget->m_name = front;
+        m_threadActive = false;
     }
     // Implement the Init and other virtual functions
 
-    void ThreadMain(){
+    void ThreadMain() override{
         // Implement ThreadMain logic
-        m_threadActive = true;
         while (m_threadActive)
         {
             currentTarget->m_url = MakeUrl(currentTarget->m_name); 
             MakeLinks(currentTarget->m_url);
-            
         }
     }
     std::string MakeUrl(std::string name);
@@ -69,13 +62,14 @@ protected:
     CURL* m_curl;
 };
 
-class CNamuBackStep : public CNamuStep
+class CNamuBackStep : public CNamuStep, public CThread
 {
 public:
     CNamuBackStep(std::string back)
     {
         currentTarget = new NamuPage();
         currentTarget->m_name = back;
+        m_threadActive = false;
     }
     //virtual bool Delete ();
 

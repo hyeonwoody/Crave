@@ -13,17 +13,17 @@ CThread::CThread(const char *sName)
     }
 }
 
-static void *ThreadMeta(void *opaque)
+static void *MetaThread(void *opaque)
 {
     CThread *instance = reinterpret_cast<CThread *>(opaque);
+    instance->m_threadActive = true;
     instance->ThreadMain();
-
     return NULL;
 }
 
 bool CThread::Start()
 {
-    if (this->m_hThread == 0 && pthread_create(&this->m_hThread, NULL, ThreadMeta, this))
+    if (this->m_hThread == 0 && pthread_create(&this->m_hThread, NULL, MetaThread, this))
     {
         this->m_hThread = 0;
         return false;
@@ -38,6 +38,7 @@ bool CThread::Stop()
 {
     if (this->m_hThread)
     {
+        this->m_threadActive = false;
         pthread_join(this->m_hThread, NULL);
     }
     this->m_hThread = 0;

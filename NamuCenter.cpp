@@ -36,6 +36,19 @@ bool CNamuCenter::Found()
 //     return true;
 // }
 
+void CNamuCenter::Close()
+{
+    if (frontStep)
+    {
+        delete (frontStep);
+        frontStep = nullptr;
+    }
+
+    if (backStep)
+        delete (backStep);
+        backStep = nullptr;
+}
+
 void CNamuCenter::ThreadMain()
 {   
     // std::thread frontThread(&CNamuFrontStep::Start, frontStep);
@@ -58,11 +71,13 @@ void CNamuCenter::ThreadMain()
     // frontThread.join();
     // backThread.join();
     frontStep->Start();
-    while (1)
+    while (m_threadActive)
     {
-        if (this->m_hThread)
+        if (frontStep->currentTarget)
             continue;
-        else 
-            break;
     }
+    this->Close();
+    this->Stop();
+    
+
 }

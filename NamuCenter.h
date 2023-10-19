@@ -19,7 +19,9 @@ public :
     
     bool AddPage ();
     bool Found ();
-    virtual void ThreadMain();
+    
+    void Close();
+    void ThreadMain();
     CNamuFrontStep* frontStep;
     CNamuBackStep* backStep;
     int* data;
@@ -28,5 +30,4 @@ public :
     std::vector<std::string> vback;
 
 protected :
-    bool m_threadActive;
 };

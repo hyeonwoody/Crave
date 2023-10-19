@@ -8,7 +8,7 @@ class CThread
 {
 public:
     ThreadHandle m_hThread;
-
+    bool m_threadActive;
 public:
     CThread(const char *sName = NULL);
     virtual void ThreadMain() = 0;
