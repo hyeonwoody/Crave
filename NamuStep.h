@@ -23,8 +23,8 @@ public:
         std::string name;
         std::string url;
         size_t cnt;
-        std::queue <std::pair <std::string, std::string>> nextPage;
-        std::map<std::string, int> historyMap;
+        std::queue <std::pair <std::string, std::string>> nextPage; //prev->cur
+        std::map<std::string, std::string> historyMap; //cur<-prev
     };
     
 

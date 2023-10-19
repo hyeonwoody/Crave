@@ -48,7 +48,7 @@ static size_t CurlWriteFrontCallback(void* contents, size_t size, size_t nmemb, 
                     result += input[i];
                 }
             }
-            if (data->historyMap.find(result) == data->historyMap.end())
+            if ((data->historyMap.find(result) == data->historyMap.end()) && (result.find("분류") == std::string::npos))
             {
                 data->nextPage.push(std::make_pair (data->name, result));
                 data->historyMap.insert(std::make_pair (result, data->name));
