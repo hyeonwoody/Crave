@@ -38,15 +38,15 @@ void CNamuCenter::ThreadMain()
     {
 
         pthread_mutex_lock(&frontStep->m_mutex);
-        for (const auto& pair : frontCurrent->historyMap)
-        {   
-            std::pair<std::map<std::string,int>::iterator,bool> ret;
-            ret = frontMap.insert (std::make_pair (pair.first, pair.second));
-            if ( !ret.second ) {
-                std::cout << "element " << ret.first->first << "already existed";
-                std::cout << " with a value of " << ret.first->second << '\n';
-            }
-        }
+        // for (const auto& pair : frontCurrent->historyMap)
+        // {   
+        //     std::pair<std::map<std::string,int>::iterator,bool> ret;
+        //     ret = frontMap.insert (std::make_pair (pair.first, pair.second));
+        //     if ( !ret.second ) {
+        //         std::cout << "element " << ret.first->first << "already existed";
+        //         std::cout << " with a value of " << ret.first->second << '\n';
+        //     }
+        // }
         pthread_mutex_unlock(&frontStep->m_mutex);
     }
 

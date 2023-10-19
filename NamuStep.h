@@ -22,8 +22,8 @@ public:
     {
         std::string name;
         std::string url;
-        int round;
-        std::queue <std::string> nextPage;
+        size_t cnt;
+        std::queue <std::pair <std::string, std::string>> nextPage;
         std::map<std::string, int> historyMap;
     };
     
@@ -60,7 +60,16 @@ public:
             m_currentTarget->url = MakeUrl(m_currentTarget->name); 
             pthread_mutex_lock(&m_mutex); 
             MakeLinks(m_currentTarget->url);
-            m_currentTarget->name = m_currentTarget->nextPage.pop();
+
+            if (m_currentTarget->cnt == 0) {
+                m_currentTarget->nextPage.pop();
+                m_currentTarget->nextPage.pop();
+                m_currentTarget->cnt = m_currentTarget->nextPage.size();
+            }
+            
+            m_currentTarget->name = m_currentTarget->nextPage.front().second;
+            m_currentTarget->nextPage.pop();
+            m_currentTarget->cnt--;
             pthread_mutex_unlock (&m_mutex);
         }
     }
