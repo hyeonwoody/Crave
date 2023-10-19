@@ -3,10 +3,11 @@
 
 #include <string>
 #include <vector>
-#include <set>
+#include <map>
 #include <memory>
 #include "./libs/Thread.h"
 #include <curl/curl.h>
+#include "./dataStructure/ThreadSafeQueue.h"
 
 
 class CNamuStep
@@ -20,7 +21,8 @@ public:
     {
         std::string m_name;
         std::string m_url;
-        std::set<std::string> m_link;
+        int round;
+        std::map<std::string, int> m_link;
         NamuPage* prev;
         NamuPage* next;
     };
@@ -29,6 +31,7 @@ public:
     bool CurlInit(CURL* pCurl, NamuPage* pNamuPage);
     CURL* m_curl;
     NamuPage* currentTarget;
+    ThreadSafeQueue <std::string> dataCenter;
 private:
 
 protected:
@@ -43,16 +46,19 @@ public:
     {
         currentTarget = new NamuPage();
         currentTarget->m_name = front;
-        m_threadActive = false;
+        m_threadStatus = e_ThreadStatus::THREAD_INACTIVE;
+        pthread_mutex_init(&m_mutex, NULL);
     }
     // Implement the Init and other virtual functions
 
     void ThreadMain() override{
         // Implement ThreadMain logic
-        while (m_threadActive)
+        while (m_threadStatus != e_ThreadStatus::THREAD_INACTIVE)
         {
             currentTarget->m_url = MakeUrl(currentTarget->m_name); 
+            pthread_mutex_lock(&m_mutex); 
             MakeLinks(currentTarget->m_url);
+            pthread_mutex_unlock (&m_mutex);
         }
     }
     std::string MakeUrl(std::string name);
@@ -69,16 +75,19 @@ public:
     {
         currentTarget = new NamuPage();
         currentTarget->m_name = back;
-        m_threadActive = false;
+        m_threadStatus = e_ThreadStatus::THREAD_INACTIVE;
+        pthread_mutex_init(&m_mutex, NULL);
     }
     //virtual bool Delete ();
 
     virtual void ThreadMain() override {
         // Implement ThreadMain logic
-        while (m_threadActive)
+        while (m_threadStatus != e_ThreadStatus::THREAD_INACTIVE)
         {
-            currentTarget->m_url = MakeUrl(currentTarget->m_name); 
+            currentTarget->m_url = MakeUrl(currentTarget->m_name);
+            pthread_mutex_lock(&m_mutex); 
             MakeLinks(currentTarget->m_url);
+            pthread_mutex_unlock (&m_mutex);
         }
     }
 
@@ -86,6 +95,7 @@ public:
     bool MakeLinks (std::string url);
 
 protected:
+    
 };
 
 

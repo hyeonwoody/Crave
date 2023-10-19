@@ -5,6 +5,7 @@ CThread::CThread(const char *sName)
 {
     this->m_hThread = 0;
     this->m_sName = NULL;
+    this->m_mutex = PTHREAD_MUTEX_INITIALIZER;
     if (sName)
     {
         this->m_sName = new char[THREAD_NAME_MAX];
@@ -16,7 +17,7 @@ CThread::CThread(const char *sName)
 static void *MetaThread(void *opaque)
 {
     CThread *instance = reinterpret_cast<CThread *>(opaque);
-    instance->m_threadActive = true;
+    instance->m_threadStatus = e_ThreadStatus::THREAD_ACTIVE;
     instance->ThreadMain();
     return NULL;
 }
@@ -38,7 +39,7 @@ bool CThread::Stop()
 {
     if (this->m_hThread)
     {
-        this->m_threadActive = false;
+        this->m_threadStatus = e_ThreadStatus::THREAD_INACTIVE;
         pthread_join(this->m_hThread, NULL);
     }
     this->m_hThread = 0;

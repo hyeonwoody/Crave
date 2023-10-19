@@ -346,14 +346,14 @@ int main(int argc, char* argv[]) {
     }
 
     CNamuCenter* namu = new CNamuCenter(argv[1], argv[2]);
-    namu->m_threadActive = true;
+    namu->m_threadStatus = e_ThreadStatus::THREAD_ACTIVE;
     namu->Start();
     
     // std::string url = "https://namu.wiki/w/%ED%9A%A8%EC%97%B0";
     // std::string html = getHtml(url);
     // std::cout <<html<<std::endl;
     //crawlHtml(html);
-    while (namu->m_threadActive)
+    while (namu->m_threadStatus != e_ThreadStatus::THREAD_INACTIVE)
     {
         
     }

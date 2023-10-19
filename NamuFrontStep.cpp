@@ -4,7 +4,6 @@
 #include "./libs/Curl.cpp"
 
 std::string CNamuFrontStep::MakeUrl (std::string name)  {
-        // Implement MakeUrl logic
         const std::string prefix = "https://namu.wiki/w/";
         return prefix + name;
 }

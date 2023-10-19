@@ -13,29 +13,6 @@ bool CNamuCenter::Found()
     return false;
 }
 
-// bool CNamuCenter::Start()
-// {
-//     m_threadActive = true;
-//     ThreadMain();
-//     return true;
-// }
-
-// bool CNamuCenter::Stop()
-// {   
-//     m_threadActive = false;
-//     if (frontStep)
-//     {
-//         delete frontStep;
-//         frontStep = NULL;
-//     }
-//     if (backStep)
-//     {
-//         delete backStep;
-//         backStep = NULL;
-//     }
-//     return true;
-// }
-
 void CNamuCenter::Close()
 {
     if (frontStep)
@@ -51,33 +28,23 @@ void CNamuCenter::Close()
 
 void CNamuCenter::ThreadMain()
 {   
-    // std::thread frontThread(&CNamuFrontStep::Start, frontStep);
-    // std::thread backThread(&CNamuBackStep::Start, backStep);
-    
-    // CNamuStep::NamuPage *frontTarget = frontStep->currentTarget;
-    // CNamuStep::NamuPage *backTarget = backStep->currentTarget;
-
-    // while (m_threadActive) 
-    // {
-    //     if (frontTarget->m_link.size())
-    //     {
-    //         frontTarget->m_link.empty();
-    //     }
-        
-    // }
-
-
-    
-    // frontThread.join();
-    // backThread.join();
     frontStep->Start();
-    while (m_threadActive)
+
+    CNamuStep::NamuPage *frontCurrent = frontStep->currentTarget;
+    CNamuStep::NamuPage *backCurrent = frontStep->currentTarget;
+
+    std::map<std::string, int> frontMap;
+    std::map<std::string, int> backMap;
+    while (m_threadStatus != e_ThreadStatus::THREAD_INACTIVE)
     {
-        if (frontStep->currentTarget)
-            continue;
+
+        pthread_mutex_lock(&frontStep->m_mutex);
+        for (const auto& pair : frontCurrent->m_link)
+        {
+            frontMap[pair.first] = pair.second;
+        }
+        pthread_mutex_unlock(&frontStep->m_mutex);
     }
     this->Close();
     this->Stop();
-    
-
 }

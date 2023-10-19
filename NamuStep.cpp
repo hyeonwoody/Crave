@@ -5,31 +5,11 @@
 #include "./libs/Curl.cpp"
 
 
-
-// bool CNamuStep::Start()
-// {
-//     m_threadActive = true;
-//     //this->ThreadMain();
-//     ThreadMain();
-//     return true;
-// }
-
-// bool CNamuStep::Stop()
-// {
-//     return true;
-// }
-
 void CNamuStep::ThreadMain()
 {
 
     int a = 0;
 }
-
-
-
-
-
-
 
 std::string CNamuBackStep::MakeUrl(std::string name)
     {
@@ -75,31 +55,3 @@ bool CNamuBackStep::MakeLinks (std::string url)  {
     
         return true;   
 }
-
-// std::string CNamuFrontStep::MakeUrl(std::string name)
-// {
-//     const std::string prefix = "https://namu.wiki/w/";
-//     return prefix + name;
-// }
-
-// std::string CNamuBackStep::MakeUrl(std::string name)
-// {
-//     const std::string prefix = "https://namu.wiki/backlink/";
-//      // Find the first occurrence of ' ' in the string
-//     size_t pos = name.find_first_of(' ');
-
-//     // Continue replacing consecutive spaces with a single "%20"
-//     while (pos != std::string::npos) {
-//         // Find the position of the first character after consecutive spaces
-//         size_t endPos = name.find_first_not_of(' ', pos);
-
-//         // Replace the consecutive spaces with "%20"
-//         name.replace(pos, endPos - pos, "%20");
-
-//         // Find the next position of a space after the replacement
-//         pos = name.find_first_of(' ', endPos);
-//     }
-
-//     std::cout << name << std::endl;
-//     return prefix + name;
-// }
