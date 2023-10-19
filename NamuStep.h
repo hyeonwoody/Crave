@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <queue>
 #include <map>
 #include <memory>
 #include "./libs/Thread.h"
@@ -19,19 +20,20 @@ public:
     
     typedef struct NamuPage
     {
-        std::string m_name;
-        std::string m_url;
+        std::string name;
+        std::string url;
         int round;
-        std::map<std::string, int> m_link;
-        NamuPage* prev;
-        NamuPage* next;
+        std::queue <std::string> nextPage;
+        std::map<std::string, int> historyMap;
     };
+    
 
+    
     virtual void ThreadMain();
     bool CurlInit(CURL* pCurl, NamuPage* pNamuPage);
     CURL* m_curl;
-    NamuPage* currentTarget;
-    ThreadSafeQueue <std::string> dataCenter;
+    NamuPage* m_currentTarget;
+    ThreadSafeQueue <std::string> m_dataCenter;
 private:
 
 protected:
@@ -44,8 +46,8 @@ public:
 
     CNamuFrontStep(std::string front) : CThread("FrontStep") 
     {
-        currentTarget = new NamuPage();
-        currentTarget->m_name = front;
+        m_currentTarget = new NamuPage();
+        m_currentTarget->name = front;
         m_threadStatus = e_ThreadStatus::THREAD_INACTIVE;
         pthread_mutex_init(&m_mutex, NULL);
     }
@@ -55,9 +57,10 @@ public:
         // Implement ThreadMain logic
         while (m_threadStatus != e_ThreadStatus::THREAD_INACTIVE)
         {
-            currentTarget->m_url = MakeUrl(currentTarget->m_name); 
+            m_currentTarget->url = MakeUrl(m_currentTarget->name); 
             pthread_mutex_lock(&m_mutex); 
-            MakeLinks(currentTarget->m_url);
+            MakeLinks(m_currentTarget->url);
+            m_currentTarget->name = m_currentTarget->nextPage.pop();
             pthread_mutex_unlock (&m_mutex);
         }
     }
@@ -73,8 +76,8 @@ class CNamuBackStep : public CNamuStep, public CThread
 public:
     CNamuBackStep(std::string back)
     {
-        currentTarget = new NamuPage();
-        currentTarget->m_name = back;
+        m_currentTarget = new NamuPage();
+        m_currentTarget->name = back;
         m_threadStatus = e_ThreadStatus::THREAD_INACTIVE;
         pthread_mutex_init(&m_mutex, NULL);
     }
@@ -84,9 +87,9 @@ public:
         // Implement ThreadMain logic
         while (m_threadStatus != e_ThreadStatus::THREAD_INACTIVE)
         {
-            currentTarget->m_url = MakeUrl(currentTarget->m_name);
+            m_currentTarget->url = MakeUrl(m_currentTarget->name);
             pthread_mutex_lock(&m_mutex); 
-            MakeLinks(currentTarget->m_url);
+            MakeLinks(m_currentTarget->url);
             pthread_mutex_unlock (&m_mutex);
         }
     }

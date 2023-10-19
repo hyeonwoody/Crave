@@ -3,6 +3,7 @@
 #include "NamuStep.h"
 #include "./libs/Curl.cpp"
 
+
 std::string CNamuFrontStep::MakeUrl (std::string name)  {
         const std::string prefix = "https://namu.wiki/w/";
         return prefix + name;
@@ -21,7 +22,7 @@ bool CNamuFrontStep::MakeLinks (std::string url)  {
         
         
         curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, CurlWriteFrontCallback);
-        curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, currentTarget);
+        curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, m_currentTarget);
 
         curl_easy_setopt(m_curl, CURLOPT_VERBOSE, 1L);
         // curl_easy_setopt(m_curl, CURLOPT_DEBUGFUNCTION, CurlDebugCallback);

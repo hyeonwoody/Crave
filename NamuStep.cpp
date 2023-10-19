@@ -45,7 +45,7 @@ bool CNamuBackStep::MakeLinks (std::string url)  {
     }
         
         curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, CurlWriteCallback);
-        curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, currentTarget);
+        curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, m_currentTarget);
 
         curl_easy_setopt(m_curl, CURLOPT_VERBOSE, 1L);
         curl_easy_setopt(m_curl, CURLOPT_DEBUGFUNCTION, CurlDebugCallback);

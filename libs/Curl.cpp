@@ -48,7 +48,12 @@ static size_t CurlWriteFrontCallback(void* contents, size_t size, size_t nmemb, 
                     result += input[i];
                 }
             }
-            data->m_link.insert(std::make_pair(result, data->round));
+            if (data->historyMap.find(result) == data->historyMap.end())
+            {
+                data->nextPage.push(result);
+                data->historyMap.insert(std::make_pair (result, data->round));
+            }
+            
         }
         searchStart = match.suffix().first;
     }
