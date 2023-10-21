@@ -3,23 +3,24 @@
 #include "NamuStep.h"
 #include "./libs/Curl.cpp"
 
+std::string CNamuBackStep::MakeUrl (std::string name)  {
+    const std::string prefix = "https://namu.wiki/backlink/";
+    size_t pos = name.find_first_of(' ');
 
-std::string CNamuFrontStep::MakeUrl (std::string name)  {
-        const std::string prefix = "https://namu.wiki/w/";
-        return prefix + name;
+    while (pos != std::string::npos) {
+        size_t endPos = name.find_first_not_of(' ', pos);
+        name.replace(pos, endPos - pos, "%20");
+
+        // Find the next position of a space after the replacement
+        pos = name.find_first_of(' ', endPos);
+    }
+
+    return prefix + name;
 }
 
-bool CNamuFrontStep::MakeLinks (std::string url)  {
-    std::vector<std::string> a;
-        m_curl = curl_easy_init();
-    if (m_curl)
-    {
-        curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
-    }
-    else {
-       return false;
-    }
-        curlInit(url);
+bool CNamuBackStep::MakeLinks (std::string url)  {
+    curlInit(url);
+        
         
         curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, CurlWriteFrontCallback);
         curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, m_currentTarget);
