@@ -5,11 +5,13 @@
 class CNamuCenter : public CThread
 {
 public:
-    CNamuCenter (std::string front, const std::string back) : CThread ("NamuCenter"){
-        vfront.push_back(front);
-        vback.push_back(back);
+    CNamuCenter (std::string front, const std::string back, size_t routes, size_t stages) : CThread ("NamuCenter"){
 
-        data = new int;
+        origin = front;
+        destination = back;
+        
+        n_route = routes;
+        n_stage = stages;
 
         frontStep = new CNamuFrontStep(front);
         backStep = new CNamuBackStep(back);
@@ -17,17 +19,24 @@ public:
 
 public :
     
-    bool AddPage ();
-    bool Found ();
-    
     void Close();
+    void Stop();
     void ThreadMain();
-    CNamuFrontStep* frontStep;
-    CNamuBackStep* backStep;
-    int* data;
-
-    std::vector<std::string> vfront;
-    std::vector<std::string> vback;
 
 protected :
+private:
+
+    CNamuFrontStep* frontStep;
+    CNamuBackStep* backStep;
+
+    std::string origin;
+    std::string destination;
+
+    size_t n_stage;
+    size_t n_route;
+
+    std::vector<std::vector<std::string>> finalResult;
+    bool resultAlreadyExist(std::vector <std::string> tmpResult);
+    bool checkElement (std::string tmpElement);
+    int resultCnt;
 };

@@ -10,8 +10,7 @@ std::string CNamuFrontStep::MakeUrl (std::string name)  {
 }
 
 bool CNamuFrontStep::MakeLinks (std::string url)  {
-    std::vector<std::string> a;
-        m_curl = curl_easy_init();
+    m_curl = curl_easy_init();
     if (m_curl)
     {
         curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
@@ -19,19 +18,18 @@ bool CNamuFrontStep::MakeLinks (std::string url)  {
     else {
        return false;
     }
-        curlInit(url);
         
-        curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, CurlWriteFrontCallback);
-        curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, m_currentTarget);
+    curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, CurlWriteFrontCallback);
+    curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, m_currentTarget);
 
-        curl_easy_setopt(m_curl, CURLOPT_VERBOSE, 1L);
-        // curl_easy_setopt(m_curl, CURLOPT_DEBUGFUNCTION, CurlDebugCallback);
-        // curl_easy_setopt(m_curl, CURLOPT_DEBUGDATA, NULL);  
-        // curl_easy_setopt(curl, CURLOPT_WRITEDATA, &html);
+    curl_easy_setopt(m_curl, CURLOPT_VERBOSE, 0L);
+    // curl_easy_setopt(m_curl, CURLOPT_DEBUGFUNCTION, CurlDebugCallback);
+    // curl_easy_setopt(m_curl, CURLOPT_DEBUGDATA, NULL);  
+    // curl_easy_setopt(curl, CURLOPT_WRITEDATA, &html);
 
-        // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-        // curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, CurlDebugCallback);
-        // curl_easy_setopt(curl, CURLOPT_DEBUGDATA, NULL);        
-        CURLcode res = curl_easy_perform(m_curl);
-        return true;
+    // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+    // curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, CurlDebugCallback);
+    // curl_easy_setopt(curl, CURLOPT_DEBUGDATA, NULL);        
+    CURLcode res = curl_easy_perform(m_curl);
+    return true;
 }

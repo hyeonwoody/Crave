@@ -25,10 +25,6 @@ public:
         return m_map.find(key);
     }
 
-    typename std::map<Key, Value>::const_iterator end() {
-        std::unique_lock<std::mutex> lock(m_mutex);
-        return m_map.end();
-    }
     // Pops an element off the queue 
     bool empty() 
     { 
@@ -38,4 +34,11 @@ public:
   
         return m_map.empty(); 
     } 
+
+    typename std::map<Key, Value>::iterator begin() { std::unique_lock<std::mutex> lock(m_mutex); return m_map.begin(); }
+    typename std::map<Key, Value>::iterator end() { std::unique_lock<std::mutex> lock(m_mutex); return m_map.end(); }
+    size_t size() const {
+        return m_map.size();
+    }
+
 }; 

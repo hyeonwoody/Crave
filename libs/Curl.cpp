@@ -8,7 +8,7 @@ inline char from_hex(char ch) {
     return isdigit(ch) ? ch - '0' : tolower(ch) - 'a' + 10;
 }
 
-static size_t CurlWriteFrontCallback(void* contents, size_t size, size_t nmemb, std::string* output) {
+static size_t CurlWriteFrontCallback(void* contents, size_t size, size_t nmemb, void* output) {
     // size_t totalSize = size * nmemb;
 
     //std::regex hrefRegex("href=['\"](/w/[^'\"]*)['\"]");
@@ -60,7 +60,7 @@ static size_t CurlWriteFrontCallback(void* contents, size_t size, size_t nmemb, 
     return totalSize;
 }
 
-static size_t CurlWriteBackCallback (void* contents, size_t size, size_t nmemb, std::string* output)
+static size_t CurlWriteBackCallback (void* contents, size_t size, size_t nmemb, void* output)
 {
     size_t totalSize = size * nmemb;
     CNamuStep::NamuPage *data = (CNamuStep::NamuPage *)output;
@@ -74,7 +74,7 @@ static size_t CurlWriteBackCallback (void* contents, size_t size, size_t nmemb, 
     ((uint8_t*)data->privateData)[data->cnt] = 0;
     return totalSize;
 }
-static size_t CurlWriteStepCallback(void* contents, size_t size, size_t nmemb, std::string* output) {
+static size_t CurlWriteStepCallback(void* contents, size_t size, size_t nmemb, void* output) {
     size_t totalSize = size * nmemb;
     CNamuStep::NamuPage *data = (CNamuStep::NamuPage *)output;
     data->privateData = (uint8_t *) realloc (data->privateData, data->cnt + totalSize +1); 

@@ -1,53 +1,147 @@
-#include <thread>
+
 
 #include "NamuCenter.h"
+#include <stack>
+#include <queue>
+#include <thread>
+#include <chrono>
+
+#define _FRONTBACK 1
 
 
-bool CNamuCenter::AddPage()
+
+void CNamuCenter::Stop()
 {
-    return true;
-}
-
-bool CNamuCenter::Found()
-{
-    return false;
+    if (frontStep)
+    {
+        frontStep->Stop();
+        delete (frontStep);
+        frontStep = nullptr;
+    }
+    if (backStep)
+    {
+        backStep->Stop();
+        delete (backStep);
+        backStep = nullptr;
+    }
+    m_threadStatus = THREAD_INACTIVE;
 }
 
 void CNamuCenter::Close()
 {
     if (frontStep)
     {
-        delete (frontStep);
-        frontStep = nullptr;
+        frontStep->Close();
     }
 
     if (backStep)
-        delete (backStep);
-        backStep = nullptr;
+    {
+        backStep->Close();
+    }
 }
 
+bool CNamuCenter::checkElement (std::string tmpElement)
+{
+    for (auto& it : finalResult)
+    {
+        for (size_t i=0; i <it.size(); ++i)
+        {
+            if (tmpElement == it[i])
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool CNamuCenter::resultAlreadyExist(std::vector<std::string> tmpResult) {
+    for (const auto& final : finalResult) {
+        if (std::equal(final.begin(), final.end(), tmpResult.begin())) {
+            return true;
+        }
+    }
+
+    return false;
+}
 void CNamuCenter::ThreadMain()
 {   
+#if _FRONTBACK == 1
     frontStep->Start();
     backStep->Start();
 
     CNamuStep::NamuPage *frontCurrent = frontStep->m_currentTarget;
     CNamuStep::NamuPage *backCurrent = backStep->m_currentTarget;
 
-    std::map<std::string, int> frontMap;
-    std::map<std::string, int> backMap;
+    std::map<std::string, std::string> frontMap;
+    std::map<std::string, std::string> backMap;
     static int cnt = 0;
     while (m_threadStatus != THREAD_INACTIVE)
     {
-    
-        if (frontCurrent->historyMap.find(frontCurrent->nextPage.front().first) != frontCurrent->historyMap.end())
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        if (finalResult.size() > n_route)
         {
-            std::cout <<"FOUND!"<<cnt++<<std::endl;
-        }   
-        else
-        {
-            std::cout << "Not Yet" << cnt++ <<std::endl;
+            break;
         }
+        for (const auto & pair : frontCurrent->historyMap)
+        {
+            frontMap.insert(pair);
+        }
+        for (const auto & pair : backCurrent->historyMap)
+        {
+            backMap.insert(pair);
+        }
+            
+        for (const auto & pair : backMap)
+        {
+            if (finalResult.size() > n_route)
+            {
+                break;
+            }
+            if (frontMap.find(pair.first) != frontMap.end())
+            {
+                std::cout <<"FOUND!"<<cnt++<<std::endl;
+                                
+                std::string frontTarget = frontMap[pair.first];
+                if (checkElement (frontTarget))
+                {
+                    continue;
+                }
+                std::string backTarget = pair.first;
+                
+                std::stack <std::string> tmpFront;
+                std::vector <std::string> tmpResult;
+            
+                int a = 0;
+                
+                tmpResult.push_back (origin);
+                do {
+                    tmpFront.push(frontTarget);
+                    frontTarget = frontMap[frontTarget];
+                } while (frontMap[frontTarget] != origin);
+                
+                while (!tmpFront.empty())
+                {
+                    tmpResult.push_back(tmpFront.top());
+                    tmpFront.pop();
+                } 
+                do {
+                    tmpResult.push_back (backTarget);
+                    backTarget = backMap[backTarget];
+                } while (backTarget != destination);
+                tmpResult.push_back (destination);
+
+                if ((!resultAlreadyExist(tmpResult))
+                    && (tmpResult.size() > n_stage)
+                    )
+                {
+                    finalResult.push_back(tmpResult);
+                    resultCnt++;
+                }
+            }   
+        }
+
+        
                 // for (const auto& pair : frontCurrent->historyMap)
         // {   
         //     std::pair<std::map<std::string,int>::iterator,bool> ret;
@@ -60,7 +154,82 @@ void CNamuCenter::ThreadMain()
     }
 
     free(frontCurrent);
+    free(backCurrent);
 
     this->Close();
+    for (auto& it : finalResult)
+    {
+        for (auto& itt : it)
+        {
+            std::cout << itt << "->";
+        }
+        std::cout << std::endl;
+    }
     this->Stop();
+    
+
+
+#elif _FRONTBACK == 0
+    frontStep->Start();
+
+
+    CNamuStep::NamuPage *frontCurrent = frontStep->m_currentTarget;
+    std::map<std::string, std::string> frontMap;
+    while (m_threadStatus != 0)
+    {
+        for (const auto & pair : frontCurrent->historyMap)
+        {
+            frontMap.insert(pair);
+        }
+        int cnt = 0;
+        for (const auto & pair : frontMap)
+        {
+            if (frontMap.find(destination) != frontMap.end())
+            {
+                std::cout <<"FOUND!"<<cnt++<<std::endl;
+                                
+                std::string frontTarget = frontMap[destination];
+                if (checkElement(frontTarget))
+                {
+                    continue;
+                }
+                
+                std::stack <std::string> tmpFront;
+                std::vector <std::string> tmpResult;
+            
+                int a = 0;
+                
+                tmpResult.push_back(origin);
+                if (frontMap[frontTarget] == origin)
+                {
+                    tmpFront.push (frontTarget);
+                }
+                while (frontMap[frontTarget] != origin)
+                {
+                        tmpFront.push(frontTarget);
+                        frontTarget = frontMap[frontTarget];
+                } 
+                    
+                while (!tmpFront.empty())
+                {
+                        tmpResult.push_back(tmpFront.top());
+                        tmpFront.pop();
+                }
+                tmpResult.push_back (destination);
+
+                if ((!resultAlreadyExist(tmpResult))
+                    //&& tmpResult.size() > m_stage
+                    )
+                {
+                    finalResult.push_back(tmpResult);
+                    resultCnt++;
+                }
+            }   
+            else
+            {
+                std::cout << "Not Yet" << cnt++ <<std::endl;
+            }
+        }
+    }
+#endif
 }
