@@ -60,20 +60,34 @@ static size_t CurlWriteFrontCallback(void* contents, size_t size, size_t nmemb, 
     return totalSize;
 }
 
-static size_t CurlWriteCallback(void* contents, size_t size, size_t nmemb, std::string* output) {
-    // size_t totalSize = size * nmemb;
-
-    
+static size_t CurlWriteBackCallback (void* contents, size_t size, size_t nmemb, std::string* output)
+{
+    size_t totalSize = size * nmemb;
     CNamuStep::NamuPage *data = (CNamuStep::NamuPage *)output;
-    // data->m_html = (uint8_t *) realloc (data->m_html, data->transferedSize + totalSize +1); 
-    // if (data->m_html == NULL)
-    // {
-    //     return 0;
-    // }
-    // memcpy(data->m_html, contents, data->transferedSize + totalSize);
-    // data->transferedSize += totalSize;
-    // data->m_html[data->transferedSize] = 0;
-    // return totalSize;
+    data->privateData = (uint8_t *) realloc (data->privateData, data->cnt + totalSize +1); 
+    if (data->privateData == NULL)
+    {
+        return 0;
+    }
+    memcpy(data->privateData + data->cnt, contents, totalSize);
+    data->cnt += totalSize;
+    ((uint8_t*)data->privateData)[data->cnt] = 0;
+    return totalSize;
+}
+static size_t CurlWriteStepCallback(void* contents, size_t size, size_t nmemb, std::string* output) {
+    size_t totalSize = size * nmemb;
+    CNamuStep::NamuPage *data = (CNamuStep::NamuPage *)output;
+    data->privateData = (uint8_t *) realloc (data->privateData, data->cnt + totalSize +1); 
+    if (data->privateData == NULL)
+    {
+        return 0;
+    }
+    memcpy(data->privateData + data->cnt, contents, totalSize);
+    data->cnt += totalSize;
+    ((uint8_t*)data->privateData)[data->cnt] = 0;
+    return totalSize;
+}
+static size_t CurlWriteCallback(void* contents, size_t size, size_t nmemb, std::string* output) {
     size_t totalSize = size * nmemb;
     output->append(static_cast<char*>(contents), totalSize);
     return totalSize;

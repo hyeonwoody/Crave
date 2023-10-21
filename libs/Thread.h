@@ -2,13 +2,13 @@
 #pragma once
 #include <pthread.h>
 
-typedef enum class ThreadStatus
+enum EThreadStatus
 {
     THREAD_INACTIVE = 0,
     THREAD_ACTIVE,
     THREAD_PAUSE,
     THREAD_STOP
-} e_ThreadStatus;
+};
 
 typedef pthread_t ThreadHandle;
 
@@ -16,7 +16,7 @@ class CThread
 {
 public:
     ThreadHandle m_hThread;
-    e_ThreadStatus m_threadStatus;
+    EThreadStatus m_threadStatus;
 public:
     CThread(const char *sName = NULL);
     virtual void ThreadMain() = 0;

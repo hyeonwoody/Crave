@@ -17,7 +17,7 @@ CThread::CThread(const char *sName)
 static void *MetaThread(void *opaque)
 {
     CThread *instance = reinterpret_cast<CThread *>(opaque);
-    instance->m_threadStatus = e_ThreadStatus::THREAD_ACTIVE;
+    instance->m_threadStatus = THREAD_ACTIVE;
     instance->ThreadMain();
     return NULL;
 }
@@ -39,7 +39,7 @@ bool CThread::Stop()
 {
     if (this->m_hThread)
     {
-        this->m_threadStatus = e_ThreadStatus::THREAD_INACTIVE;
+        this->m_threadStatus = THREAD_INACTIVE;
         pthread_join(this->m_hThread, NULL);
     }
     this->m_hThread = 0;

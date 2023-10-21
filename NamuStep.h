@@ -47,13 +47,13 @@ public:
     {
         m_currentTarget = new NamuPage();
         m_currentTarget->name = front;
-        m_threadStatus = e_ThreadStatus::THREAD_INACTIVE;
+        m_threadStatus = THREAD_INACTIVE;
     }
     // Implement the Init and other virtual functions
 
     void ThreadMain() override{
         // Implement ThreadMain logic
-        while (m_threadStatus != e_ThreadStatus::THREAD_INACTIVE)
+        while (m_threadStatus != THREAD_INACTIVE)
         {
             std::string url = MakeUrl(m_currentTarget->name);
             MakeLinks(url);
@@ -82,13 +82,13 @@ public:
     {
         m_currentTarget = new NamuPage();
         m_currentTarget->name = back;
-        m_threadStatus = e_ThreadStatus::THREAD_INACTIVE;
+        m_threadStatus = THREAD_INACTIVE;
     }
     //virtual bool Delete ();
 
     virtual void ThreadMain() override {
         // Implement ThreadMain logic
-        while (m_threadStatus != e_ThreadStatus::THREAD_INACTIVE)
+        while (m_threadStatus != THREAD_INACTIVE)
         {
             std::string url = MakeUrl(m_currentTarget->name);
             MakeLinks(url);

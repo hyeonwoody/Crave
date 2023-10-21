@@ -37,7 +37,7 @@ void CNamuCenter::ThreadMain()
     std::map<std::string, int> frontMap;
     std::map<std::string, int> backMap;
     static int cnt = 0;
-    while (m_threadStatus != e_ThreadStatus::THREAD_INACTIVE)
+    while (m_threadStatus != THREAD_INACTIVE)
     {
     
         if (frontCurrent->historyMap.find(frontCurrent->nextPage.front().first) != frontCurrent->historyMap.end())
