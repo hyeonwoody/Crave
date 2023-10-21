@@ -8,7 +8,7 @@
 #include <memory>
 #include "./libs/Thread.h"
 #include <curl/curl.h>
-#include "./dataStructure/ThreadSafeQueue.h"
+#include "./dataStructure/ThreadSafeMap.h"
 
 
 class CNamuStep
@@ -23,8 +23,8 @@ public:
         std::string name;
         std::string url;
         size_t cnt;
-        std::queue <std::pair <std::string, std::string>> nextPage; //prev->cur
-        std::map<std::string, std::string> historyMap; //cur<-prev
+        std::queue <std::pair <std::string, std::string>> nextPage; //prev=>cur
+        ThreadSafeMap<std::string, std::string> historyMap; //cur<=prev
     };
     
 
@@ -33,13 +33,12 @@ public:
     bool CurlInit(CURL* pCurl, NamuPage* pNamuPage);
     CURL* m_curl;
     NamuPage* m_currentTarget;
-    ThreadSafeQueue <std::string> m_dataCenter;
 private:
 
 protected:
 };
 
-class CNamuFrontStep : public CNamuStep, public CThread
+class CNamuFrontStep : public CNamuStep
 {
 public:
 
@@ -49,7 +48,6 @@ public:
         m_currentTarget = new NamuPage();
         m_currentTarget->name = front;
         m_threadStatus = e_ThreadStatus::THREAD_INACTIVE;
-        pthread_mutex_init(&m_mutex, NULL);
     }
     // Implement the Init and other virtual functions
 
@@ -58,19 +56,19 @@ public:
         while (m_threadStatus != e_ThreadStatus::THREAD_INACTIVE)
         {
             m_currentTarget->url = MakeUrl(m_currentTarget->name); 
-            pthread_mutex_lock(&m_mutex); 
+            
             MakeLinks(m_currentTarget->url);
-
+            
             if (m_currentTarget->cnt == 0) {
                 m_currentTarget->nextPage.pop();
                 m_currentTarget->nextPage.pop();
                 m_currentTarget->cnt = m_currentTarget->nextPage.size();
             }
             
-            m_currentTarget->name = m_currentTarget->nextPage.front().second;
+             m_currentTarget->name = m_currentTarget->nextPage.front().second;
             m_currentTarget->nextPage.pop();
             m_currentTarget->cnt--;
-            pthread_mutex_unlock (&m_mutex);
+            
         }
     }
     std::string MakeUrl(std::string name);
@@ -88,7 +86,6 @@ public:
         m_currentTarget = new NamuPage();
         m_currentTarget->name = back;
         m_threadStatus = e_ThreadStatus::THREAD_INACTIVE;
-        pthread_mutex_init(&m_mutex, NULL);
     }
     //virtual bool Delete ();
 
@@ -97,9 +94,7 @@ public:
         while (m_threadStatus != e_ThreadStatus::THREAD_INACTIVE)
         {
             m_currentTarget->url = MakeUrl(m_currentTarget->name);
-            pthread_mutex_lock(&m_mutex); 
             MakeLinks(m_currentTarget->url);
-            pthread_mutex_unlock (&m_mutex);
         }
     }
 

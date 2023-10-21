@@ -28,4 +28,5 @@ public:
     char *m_sName;
 public:
     pthread_mutex_t m_mutex;
+    pthread_cond_t m_cond;
 };
