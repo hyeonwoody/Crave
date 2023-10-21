@@ -32,13 +32,17 @@ public:
         void* privateData;
     };
     
-    CURL* m_curl;
     NamuPage* m_currentTarget;
     bool resultInsertion (NamuPage* current, std::string key);
 private:
 
 protected:
+    CURL* m_curl;
+    
+    bool blockDetection (std::string html);
     bool curlInit(std::string url, NamuPage* tmp);
+    std::string GetHtml (std::string url);
+    void GetNextTarget ();
     int64_t Duration();
 };
 
@@ -50,6 +54,7 @@ public:
     CNamuFrontStep(std::string front) : CThread("FrontStep") 
     {
         m_currentTarget = new NamuPage();
+        m_currentTarget->target = front;
         m_currentTarget->name = front;
         m_threadStatus = THREAD_INACTIVE;
         m_currentTarget->historyMap.insert (std::make_pair (front, front));
@@ -60,21 +65,20 @@ public:
         // Implement ThreadMain logic
         while (m_threadStatus != THREAD_INACTIVE)
         {
-            std::string url = MakeUrl(m_currentTarget->name);
-            MakeLinks(url);
-            
-            if (m_currentTarget->cnt == 0) {
-                m_currentTarget->cnt = m_currentTarget->nextPage.size();
-            }
-            if (!m_currentTarget->nextPage.empty())
+            std::string url = MakeUrl(m_currentTarget->target);
+            std::string html = GetHtml (url);
+            if (blockDetection(html))
             {
-                m_currentTarget->name = m_currentTarget->nextPage.front().second;
-                m_currentTarget->nextPage.pop();
+                continue;
             }
-            m_currentTarget->cnt--;     
+            GetLinks(html);
+            GetNextTarget();
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(Duration()));
         }
     }
     std::string MakeUrl(std::string name);
+    bool GetLinks (std::string url);
     bool MakeLinks (std::string url);
     
 protected:
@@ -102,6 +106,11 @@ public:
             std::string url = MakeUrl(m_currentTarget->target);
             std::string html = GetHtml(url);
 
+            if (blockDetection(html))
+            {
+                continue;
+            }
+
             if (GetLinks(html)) 
             {
                 continue;
@@ -110,14 +119,12 @@ public:
             {
                 GetNextTarget();
             }
-            
+            std::this_thread::sleep_for(std::chrono::milliseconds(Duration()));
         }
     }
 
     std::string MakeUrl(std::string target);
-    std::string GetHtml (std::string url);
     bool GetLinks (std::string html);
-    void GetNextTarget ();
 
 protected:
     

@@ -27,10 +27,54 @@ bool CNamuStep::curlInit(std::string url, NamuPage* tmp)
     }
 }
 
+bool CNamuStep::blockDetection (std::string html)
+{
+    if (html.find("<h1>비정상") != std::string::npos)
+    {
+        return true;
+    }
+    return false;
+}
+
+std::string CNamuStep::GetHtml (std::string url)  {
+
+    NamuPage* tmp = new NamuPage();
+    
+    std::string html;
+    curlInit(url, tmp);
+    CURLcode res = curl_easy_perform(this->m_curl);
+    std::cout << static_cast<const char*> (tmp->privateData) <<std::endl;
+    if (tmp->privateData)
+    {
+        html = static_cast<const char*> (tmp->privateData);
+        delete tmp->privateData;
+        tmp->privateData = nullptr;
+    }
+    
+    if (tmp)
+    {
+        delete tmp;
+        tmp = nullptr;
+    }
+    
+    return html;
+}
+
+void CNamuStep::GetNextTarget ()
+{   
+    if (!m_currentTarget->nextPage.empty()){
+        m_currentTarget->target = m_currentTarget->nextPage.front().second;
+        m_currentTarget->nextPage.pop();
+        m_currentTarget->name = m_currentTarget->target;
+    }
+    
+}
+
 bool CNamuStep::resultInsertion (NamuPage* current, std::string result)
 {
     if ((current->historyMap.find(result) == current->historyMap.end())
-        && (result.find("분류") == std::string::npos))
+        && (result.find("분류") == std::string::npos)
+        && (result.find("/") == std::string::npos))
         {
             current->nextPage.push (std::make_pair (current->name, result));
             current->historyMap.insert (std::make_pair (result, current->name));

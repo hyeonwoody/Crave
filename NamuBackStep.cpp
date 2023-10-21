@@ -18,39 +18,6 @@ std::string CNamuBackStep::MakeUrl (std::string name)  {
     return prefix + name;
 }
 
-std::string CNamuBackStep::GetHtml (std::string url)  {
-
-    
-
-    NamuPage* tmp = new NamuPage();
-    
-    std::string html;
-    curlInit(url, tmp);
-        // curl_easy_setopt(m_curl, CURLOPT_DEBUGFUNCTION, CurlDebugCallback);
-        // curl_easy_setopt(m_curl, CURLOPT_DEBUGDATA, NULL);  
-        // curl_easy_setopt(curl, CURLOPT_WRITEDATA, &html);
-
-        // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-        // curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, CurlDebugCallback);
-        // curl_easy_setopt(curl, CURLOPT_DEBUGDATA, NULL);        
-    CURLcode res = curl_easy_perform(m_curl);
-    std::cout << static_cast<const char*> (tmp->privateData) <<std::endl;
-    if (tmp->privateData)
-    {
-        html = static_cast<const char*> (tmp->privateData);
-        delete tmp->privateData;
-        tmp->privateData = nullptr;
-    }
-    
-    
-    if (tmp)
-    {
-        delete tmp;
-        tmp = nullptr;
-    }
-    
-    return html;
-}
 
 bool CNamuBackStep::GetLinks (std::string html)
 {
@@ -104,14 +71,4 @@ bool CNamuBackStep::GetLinks (std::string html)
         }
     }
     return false;
-}
-
-void CNamuBackStep::GetNextTarget ()
-{   
-    if (!m_currentTarget->nextPage.empty()){
-        m_currentTarget->target = m_currentTarget->nextPage.front().second;
-        m_currentTarget->nextPage.pop();
-        m_currentTarget->name = m_currentTarget->target;
-    }
-    
 }

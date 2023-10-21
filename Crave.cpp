@@ -3,8 +3,8 @@
 
 #include "NamuCenter.h"
 
-#define NUM_OF_ROUTES 20
-#define NUM_OF_STAGES 0
+#define NUM_OF_ROUTES 2
+#define NUM_OF_STAGES 8
 
 int main(int argc, char* argv[]) {
 
