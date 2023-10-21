@@ -140,30 +140,21 @@ void CNamuCenter::ThreadMain()
                 }
             }   
         }
-
-        
-                // for (const auto& pair : frontCurrent->historyMap)
-        // {   
-        //     std::pair<std::map<std::string,int>::iterator,bool> ret;
-        //     ret = frontMap.insert (std::make_pair (pair.first, pair.second));
-        //     if ( !ret.second ) {
-        //         std::cout << "element " << ret.first->first << "already existed";
-        //         std::cout << " with a value of " << ret.first->second << '\n';
-        //     }
-        // }
     }
 
     free(frontCurrent);
     free(backCurrent);
 
     this->Close();
+    std::string tmp;
     for (auto& it : finalResult)
     {
         for (auto& itt : it)
         {
+            tmp += itt + "=>";
             std::cout << itt << "->";
         }
-        std::cout << std::endl;
+        std::cout << tmp.substr(0, tmp.length() - 2) << std::endl;
     }
     this->Stop();
     
