@@ -10,6 +10,7 @@
 
 #include "./libs/Thread.h"
 #include <curl/curl.h>
+#include "./dataStructure/NamuPage.h"
 #include "./dataStructure/ThreadSafeMap.h"
 #include <thread> //Sleep
 #include <chrono> //Sleep
@@ -31,7 +32,7 @@ public:
         ThreadSafeMap<std::string, std::string> historyMap; //cur<=prev
         void* privateData;
     };
-    
+    _NamuPage* m_current;
     NamuPage* m_currentTarget;
     bool resultInsertion (NamuPage* current, std::string key);
 private:

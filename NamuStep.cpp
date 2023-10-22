@@ -7,7 +7,7 @@ int64_t CNamuStep::Duration()
     std::random_device rd;
     std::mt19937_64 gen(rd()); // Mersenne Twister 64-bit PRNG
     std::uniform_int_distribution<int64_t> distribution(0, 3000);
-    return distribution(gen);
+    return distribution(gen) + 4400;
 }
 
 bool CNamuStep::curlInit(std::string url, NamuPage* tmp)

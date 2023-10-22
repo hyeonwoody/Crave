@@ -66,7 +66,10 @@ bool CNamuCenter::resultAlreadyExist(std::vector<std::string> tmpResult) {
 }
 void CNamuCenter::ThreadMain()
 {   
-#if _FRONTBACK == 1
+#if _FRONTBACK == 2
+    frontStep->Start();
+    backStep->Start();
+#elif _FRONTBACK == 1
     frontStep->Start();
     backStep->Start();
 
