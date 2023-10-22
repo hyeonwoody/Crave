@@ -10,6 +10,23 @@ int64_t CNamuStep::Duration()
     return distribution(gen) + 4400;
 }
 
+bool CNamuStep::_curlInit(std::string url, CurlBuffer* tmp)
+{
+
+    this->m_curl = curl_easy_init();
+    if (this->m_curl)
+    {
+        curl_easy_setopt(this->m_curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, _CurlWriteStepCallback);
+        curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, tmp);
+
+        curl_easy_setopt(m_curl, CURLOPT_VERBOSE, 0L);
+    }
+    else {
+        return false;
+    }
+}
+
 bool CNamuStep::curlInit(std::string url, NamuPage* tmp)
 {
 
@@ -34,6 +51,87 @@ bool CNamuStep::blockDetection (std::string html)
         return true;
     }
     return false;
+}
+
+bool CNamuStep::ParseHtml (std::string html)
+{
+    std::smatch match;
+    std::string::const_iterator searchStart(html.cbegin());
+    std::regex hrefRegex("href=['\"]/w/([^'\"]*)['\"]");
+    while (std::regex_search(searchStart, html.cend(), match, hrefRegex)) {
+        if (match.size() == 2) {
+            std::string input = match[1];
+            std::string result;
+            for (size_t i = 0; i < match[1].length(); i++) {
+                if (input[i] == '%') 
+                {
+                    if (i + 2 < input.length()) {
+                        char decoded_char = (from_hex(input[i + 1]) << 4) | from_hex(input[i + 2]);
+                        result += decoded_char;
+                        i += 2;
+                    }
+                }
+                else if (input[i] == '+') 
+                {
+                    result += ' ';
+                } 
+                else if (input[i] == '#')
+                {
+                    break;
+                }
+                else 
+                {
+                    result += input[i];
+                }
+            }
+            if (m_current->ResultInsert (m_current->getStage() + e_step, result))
+            {
+                //Found Route
+                m_current->Traverse (e_step, result);
+            }
+            
+        }
+        searchStart = match.suffix().first;
+    }
+
+    std::regex hrefRegey("href=['\"]/backlink/([^'\"]+)['\"][^>]*>Next");
+    if (std::regex_search(searchStart, html.cend(), match, hrefRegey)){
+        if (match.size() == 2){
+            std::string input = match[1];
+            
+            if (input.find("?from=") != std::string::npos)
+            {
+                m_current->setTarget(input);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+std::string CNamuStep::_GetHtml (std::string url)  {
+
+
+    
+    CurlBuffer* html = new CurlBuffer ();
+    std::string tmp;
+    _curlInit(url, html);
+    CURLcode res = curl_easy_perform(this->m_curl);
+
+    if (html->privateData)
+    {
+        tmp = static_cast<const char*> (html->privateData);
+        delete html->privateData;
+        html->privateData = nullptr;
+    }
+    
+    if (html)
+    {
+        delete html;
+        html = nullptr;
+    }
+    
+    return tmp;
 }
 
 std::string CNamuStep::GetHtml (std::string url)  {

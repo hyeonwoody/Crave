@@ -6,7 +6,7 @@
 #include <thread>
 #include <chrono>
 
-#define _FRONTBACK 1
+#define _FRONTBACK 2
 
 
 
@@ -69,6 +69,12 @@ void CNamuCenter::ThreadMain()
 #if _FRONTBACK == 2
     frontStep->Start();
     backStep->Start();
+
+    while (m_threadStatus != THREAD_INACTIVE)
+    {
+        int a = 0;
+    }
+
 #elif _FRONTBACK == 1
     frontStep->Start();
     backStep->Start();
@@ -155,9 +161,15 @@ void CNamuCenter::ThreadMain()
         for (auto& itt : it)
         {
             tmp += itt + "=>";
+<<<<<<< HEAD
         }
         std::cout << tmp.substr(0, tmp.length() - 2) << std::endl;
         tmp.clear();
+=======
+            std::cout << itt << "->";
+        }
+        std::cout << tmp.substr(0, tmp.length() - 2) << std::endl;
+>>>>>>> be9dfc439b13b10bac5193d6f3138c1d7a17ad3e
     }
     this->Stop();
     
