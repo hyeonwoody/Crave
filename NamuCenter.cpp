@@ -162,9 +162,15 @@ void CNamuCenter::ThreadMain()
         {
             tmp += itt + "=>";
 <<<<<<< HEAD
+<<<<<<< HEAD
         }
         std::cout << tmp.substr(0, tmp.length() - 2) << std::endl;
         tmp.clear();
+=======
+            std::cout << itt << "->";
+        }
+        std::cout << tmp.substr(0, tmp.length() - 2) << std::endl;
+>>>>>>> be9dfc439b13b10bac5193d6f3138c1d7a17ad3e
 =======
             std::cout << itt << "->";
         }
