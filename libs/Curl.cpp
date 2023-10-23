@@ -60,20 +60,20 @@ static size_t CurlWriteFrontCallback(void* contents, size_t size, size_t nmemb, 
     return totalSize;
 }
 
-static size_t CurlWriteBackCallback (void* contents, size_t size, size_t nmemb, void* output)
-{
-    size_t totalSize = size * nmemb;
-    CNamuStep::NamuPage *data = (CNamuStep::NamuPage *)output;
-    data->privateData = (uint8_t *) realloc (data->privateData, data->cnt + totalSize +1); 
-    if (data->privateData == NULL)
-    {
-        return 0;
-    }
-    memcpy(data->privateData + data->cnt, contents, totalSize);
-    data->cnt += totalSize;
-    ((uint8_t*)data->privateData)[data->cnt] = 0;
-    return totalSize;
-}
+// static size_t CurlWriteBackCallback (void* contents, size_t size, size_t nmemb, void* output)
+// {
+//     size_t totalSize = size * nmemb;
+//     CNamuStep::NamuPage *data = (CNamuStep::NamuPage *)output;
+//     data->privateData = (uint8_t *) realloc (data->privateData, data->cnt + totalSize +1); 
+//     if (data->privateData == NULL)
+//     {
+//         return 0;
+//     }
+//     memcpy(data->privateData + data->cnt, contents, totalSize);
+//     data->cnt += totalSize;
+//     ((uint8_t*)data->privateData)[data->cnt] = 0;
+//     return totalSize;
+// }
 
 static size_t _CurlWriteStepCallback(void* contents, size_t size, size_t nmemb, void* output) {
     size_t totalSize = size * nmemb;

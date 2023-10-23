@@ -1,6 +1,9 @@
-
+#pragma once
+#include <tuple>
 #include "NamuStep.h"
 #include "./libs/Curl.cpp"
+
+
 
 int64_t CNamuStep::Duration()
 {
@@ -84,12 +87,16 @@ bool CNamuStep::ParseHtml (std::string html)
                     result += input[i];
                 }
             }
-            if (m_current->ResultInsert (m_current->getStage() + e_step, result))
+            int64_t* originalStage = new int64_t();
+            *originalStage = 0;
+            if (result != m_current->getName() && m_current->ResultInsert (m_current->getStage() + e_step, result, originalStage))
             {
                 //Found Route
-                m_current->Traverse (e_step, result);
+                foundRoute.push (std::make_tuple (m_current, result, *originalStage));
+                //m_current->ConfirmRoute();
+                //m_current->Traverse (e_step, result);
             }
-            
+            free(originalStage);
         }
         searchStart = match.suffix().first;
     }

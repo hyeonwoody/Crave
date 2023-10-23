@@ -2,6 +2,8 @@
 #include "NamuStep.h"
 #include "libs/Thread.h"
 
+class CNamuStep;
+
 class CNamuCenter : public CThread
 {
 public:

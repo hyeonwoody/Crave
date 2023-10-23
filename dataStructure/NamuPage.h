@@ -19,11 +19,6 @@ class _CNamuPage
         static CNamuPageMiniMap miniMap;
         _CNamuPage (std::string name, std::string target, int64_t stage);
     public :
-        typedef struct
-        {
-            uint8_t html;
-            size_t transferedSize;
-        } CurlHtml;
     private :
         uint64_t id;
         std::string target;
@@ -38,10 +33,9 @@ class _CNamuPage
     public :
         std::vector<std::string> Traverse(EStep step, std::string result);
         bool UpdateShorter(int64_t originalStage, int64_t stage, std::string resultName);
-        bool ResultInsert (int64_t stage, std::string resultName);
+        bool ResultInsert (int64_t stage, std::string resultName, int64_t *originalStage);
         bool RouteConfirm (int64_t frontStage, int64_t backStage, std::string name);
 
-        bool ResultInsert(std::string resultName, int64_t stage);
         _CNamuPage* MoveTarget(EStep step);
 
     public :
@@ -75,8 +69,6 @@ class _CNamuPage
             return nullptr;
         }
         
-
-
         void setName(std::string name) {this->name = name;}
         void setTarget(std::string target) {this->target = target;}
         void setStage(int64_t stage) {this->stage = stage;}
@@ -84,7 +76,6 @@ class _CNamuPage
         void setIndex(int64_t index) {this->index = index;}
         void addNext(_CNamuPage* next) {this->next.push_back (next);}
         void addPrev(_CNamuPage* prev) {this->prev.push_back (prev);}
-
 
         bool increamentIndex (EStep step) 
         {

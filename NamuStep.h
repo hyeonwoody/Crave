@@ -12,14 +12,16 @@
 #include <curl/curl.h>
 #include "./dataStructure/NamuPage.h"
 #include "./dataStructure/ThreadSafeMap.h"
+#include "./dataStructure/ThreadSafeQueue.h"
 #include <thread> //Sleep
 #include <chrono> //Sleep
 #include <random> //Random Time
+#include <tuple>
 
 class CNamuStep
 {
 public:
-    static std::vector<std::vector<std::string>> routes; 
+    static ThreadSafeQueue <std::tuple <_CNamuPage*, std::string, int64_t>> foundRoute; // currentTarget, binder's name, binder's stage
     typedef struct 
     {
         std::string target;

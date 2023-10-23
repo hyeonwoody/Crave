@@ -18,10 +18,10 @@ _CNamuPage* _CNamuPage::MoveTarget (EStep step)
                 tmp = this->getFirstPrev();
                 this->setIndex(0);
             }
-            if (!tmp->next.empty())
+            if (!this->next.empty())
             {   
                 tmp = tmp->getNext();
-                if (this->increamentIndex(step)) // true if tmp is not the last 
+                if (tmp->getFirstPrev()->increamentIndex(step)) // true if tmp is not the last 
                 {
                     tmp->setIndex(-1); // mark for turning back (BFS)
                 }
@@ -38,7 +38,7 @@ _CNamuPage* _CNamuPage::MoveTarget (EStep step)
             if (!tmp->prev.empty())
             {
                 tmp = tmp->getPrev();
-                if (this->increamentIndex(step))
+                if (tmp->getFirstNext()->increamentIndex(step))
                 {
                     tmp->setIndex(-1); // mark for turning back (BFS)
                 }
@@ -133,29 +133,28 @@ bool _CNamuPage::RouteConfirm (int64_t frontStage, int64_t backStage, std::strin
     
 }
 
-bool _CNamuPage::ResultInsert (int64_t stage, std::string resultName)
+bool _CNamuPage::ResultInsert (int64_t stage, std::string resultName, int64_t* originalStage)
 {   
-    int64_t originalStage = 0;
+
     if ((resultName.find ("분류:") != std::string::npos)
         ||(resultName.find("/") != std::string::npos))
     {
         return false;
     }
 
-    if (miniMap.find(resultName, &originalStage))
+    if (miniMap.find(resultName, originalStage))
     {
-        if (originalStage * stage > 0)
+        if ((*originalStage) * stage > 0)
         {
-            UpdateShorter(originalStage, stage, resultName);
+            UpdateShorter(*originalStage, stage, resultName);
             
         }
         else if ((stage < 0 && 0 < originalStage) || (originalStage < 0 && 0 < stage))
         { 
             // Found Route
-            RouteConfirm(std::max(stage, originalStage), std::min(originalStage, stage), resultName);
             return true;
         }
-        else // originalStage == 0 (resultName is origin)
+        else // originalStage == 0 (resultName is destination)
         {
         }
         return false;

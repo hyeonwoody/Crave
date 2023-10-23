@@ -31,23 +31,28 @@ public:
         // is waiting 
         m_cond.notify_one(); 
     } 
-  
-    // Pops an element off the queue 
-    T pop() 
-    { 
-  
-        // acquire lock 
+    
+    T front()
+    {
         std::unique_lock<std::mutex> lock(m_mutex); 
-  
-        // wait until queue is not empty 
         m_cond.wait(lock, 
                     [this]() { return !m_queue.empty(); }); 
+        T item = m_queue.front();
+        return item;
+    }
+
+    bool empty() {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        return m_queue.empty();
+    }
+
+    // Pops an element off the queue 
+    void pop() 
+    { 
+        std::unique_lock<std::mutex> lock(m_mutex); 
   
-        // retrieve item 
-        T item = m_queue.front(); 
-        m_queue.pop(); 
-  
-        // return item 
-        return item; 
+        m_cond.wait(lock, 
+                    [this]() { return !m_queue.empty(); }); 
+        m_queue.pop();
     } 
 }; 
