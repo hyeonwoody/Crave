@@ -3,8 +3,6 @@
 #include "NamuStep.h"
 #include "./libs/Curl.cpp"
 
-
-
 int64_t CNamuStep::Duration()
 {
     std::random_device rd;
@@ -87,16 +85,17 @@ bool CNamuStep::ParseHtml (std::string html)
                     result += input[i];
                 }
             }
-            int64_t* originalStage = new int64_t();
-            *originalStage = 0;
-            if (result != m_current->getName() && m_current->ResultInsert (m_current->getStage() + e_step, result, originalStage))
+            void* resultPage = nullptr;
+            if (result != m_current->getName() 
+            && m_current->ResultInsert (m_current->getStage() + e_step, result, resultPage))
+            
             {
                 //Found Route
-                foundRoute.push (std::make_tuple (m_current, result, *originalStage));
+                //foundRoute.push (std::make_pair<_CNamuPage*, _CNamuPage*> (reinterpret_cast<_CNamuPage*>resultPage, m_current)); // binder, currentTarget
+                foundRoute.push(std::pair<_CNamuPage*, _CNamuPage*>(reinterpret_cast<_CNamuPage*>(resultPage), (_CNamuPage* ) m_current));
                 //m_current->ConfirmRoute();
                 //m_current->Traverse (e_step, result);
             }
-            free(originalStage);
         }
         searchStart = match.suffix().first;
     }

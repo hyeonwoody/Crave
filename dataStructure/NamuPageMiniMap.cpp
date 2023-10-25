@@ -1,20 +1,44 @@
 #include "NamuPageMiniMap.h"
+#include "NamuPage.h"
 
-bool CNamuPageMiniMap::find(std::string name, int64_t* stage)
+// 템플릿 클래스 인스턴스화
+template class CNamuPageMiniMap<_CNamuPage>;
+
+std::vector <_CNamuPage> miniMap;
+
+template <typename T>
+T* CNamuPageMiniMap<T>::find(std::string name)
 {
-    for (size_t i = 0; i < miniMap.size(); ++i)
+    for (size_t i = 0; i < frontMap.size(); ++i)
     {
-        if (name == miniMap[i].second)
+
+        if (name ==  frontMap[i]->getName())
         {
-            *stage = miniMap[i].first;
-            return true;
+            return frontMap[i];
         }
     }
-    return false;
+    for (size_t i = 0; i < backMap.size(); ++i)
+    {
+        if (name ==  backMap[i]->getName())
+        {
+            return backMap[i];
+        }
+    }
+    return nullptr;
 }
 
 
-void CNamuPageMiniMap::pushElement(int64_t stage, std::string name)
+template <typename T>
+void CNamuPageMiniMap<T>::pushElement (T* element)
 {
-    miniMap.push_back (std::make_pair(stage, name));
+    if (element->getStage() > 0)
+    {
+        frontMap.push_back(element);
+    }
+    else 
+    {
+        backMap.push_back(element);
+    }
+    
 }
+

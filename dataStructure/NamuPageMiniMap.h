@@ -2,21 +2,22 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "NamuPage.h"
 
 #define MAXIMUM_STAGE 7
 
+template <typename T>
 class CNamuPageMiniMap
 {   
     
     private :
-        std::vector <std::pair<int64_t, std::string>> miniMap;
+        std::vector <T*> frontMap;
+        std::vector <T*> backMap;
     public :
         CNamuPageMiniMap ()
         {
             int a = 0;
         }   
     public :
-        void pushElement (int64_t stage, std::string name);
-        bool find (std::string name, int64_t* position);
+        void pushElement (T* element);
+        T* find (std::string name);
 };

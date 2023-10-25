@@ -8,7 +8,7 @@
 
 #define _FRONTBACK 2
 
-ThreadSafeQueue<std::tuple<_CNamuPage*, std::string, int64_t>> CNamuStep::foundRoute;
+ThreadSafeQueue<std::pair<_CNamuPage*, _CNamuPage*>> CNamuStep::foundRoute; //target, current
 
 void CNamuCenter::Stop()
 {
@@ -74,9 +74,9 @@ void CNamuCenter::ThreadMain()
     {
         if (!CNamuStep::foundRoute.empty())
         {
-            std::tuple <_CNamuPage*, std::string, int64_t> tmp = CNamuStep::foundRoute.front();
+            _CNamuPage* binder = CNamuStep::foundRoute.front().first; //binder
+            _CNamuPage* current = CNamuStep::foundRoute.front().second; // current
             CNamuStep::foundRoute.pop();
-            _CNamuPage* a = std::get<0>(tmp);
             //RouteConfirm(std::max(stage, originalStage), std::min(originalStage, stage), resultName);
             //Traverse();
             int xc = 0;

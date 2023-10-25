@@ -4,7 +4,7 @@
 #include "NamuPage.h"
 
 uint64_t _CNamuPage::uniqueID = 0;
-CNamuPageMiniMap _CNamuPage::miniMap;
+CNamuPageMiniMap<_CNamuPage> _CNamuPage::miniMap;
 
 _CNamuPage* _CNamuPage::MoveTarget (EStep step)
 {   
@@ -123,6 +123,26 @@ std::vector<std::string> _CNamuPage::Traverse(EStep step, std::string result)
     return value;
 }
 
+void _CNamuPage::Connect (_CNamuPage* current, _CNamuPage* target, int64_t stage)
+{
+    if (current->stage < stage)
+    {
+        if (current->getNext(target->getName()) == nullptr)
+        {
+            current->addNext (target);
+            target->addPrev (current);
+        }
+    }
+    else if (current-> stage > stage)
+    {
+        if (current->getPrev(target->getName()) == nullptr)
+        {
+            this->addPrev (target);
+            target->addNext (current);
+        }   
+    }
+}
+
 bool _CNamuPage::UpdateShorter(int64_t originalStage, int64_t stage, std::string resultName)
 {
 
@@ -133,7 +153,7 @@ bool _CNamuPage::RouteConfirm (int64_t frontStage, int64_t backStage, std::strin
     
 }
 
-bool _CNamuPage::ResultInsert (int64_t stage, std::string resultName, int64_t* originalStage)
+bool _CNamuPage::ResultInsert (int64_t stage, std::string resultName, void*& resultPage)
 {   
 
     if ((resultName.find ("분류:") != std::string::npos)
@@ -142,35 +162,29 @@ bool _CNamuPage::ResultInsert (int64_t stage, std::string resultName, int64_t* o
         return false;
     }
 
-    if (miniMap.find(resultName, originalStage))
+    _CNamuPage* search = miniMap.find(resultName);
+    if (search != nullptr)
     {
-        if ((*originalStage) * stage > 0)
-        {
-            UpdateShorter(*originalStage, stage, resultName);
-            
-        }
-        else if ((stage < 0 && 0 < originalStage) || (originalStage < 0 && 0 < stage))
+        resultPage = search;
+        if ((stage < 0 && 0 < search->getStage()) || (search->getStage() < 0 && 0 < stage))
         { 
             // Found Route
+            Connect (this, search, stage);
             return true;
         }
-        else // originalStage == 0 (resultName is destination)
+        else if ((search->getStage()) * stage > 0) // found in the same step
+        {
+            Connect (this, search, stage);
+        }
+        else // search == destination
         {
         }
         return false;
     }
     
     _CNamuPage* result = new _CNamuPage(resultName, resultName, stage);
-    if (this->stage < stage)
-    {
-        this->addNext (result);
-        result->addPrev (this);
-    }
-    else if (this-> stage > stage)
-    {
-        this->addPrev (result);
-        result->addNext (this);
-    }
+    resultPage = result;
+    Connect (this, result, stage);
     return false;
 }
 
@@ -182,5 +196,5 @@ _CNamuPage::_CNamuPage (std::string name, std::string target = "", int64_t stage
     this->id = uniqueID++;
     this->index = 0;
     
-    miniMap.pushElement(stage, this->name);
+    miniMap.pushElement(this);
 }

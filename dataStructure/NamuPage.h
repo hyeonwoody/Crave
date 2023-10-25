@@ -10,13 +10,11 @@ enum EStep : int64_t
     BACKSTEP = -1,
 };
 
-class CNamuPageMiniMap;
-
 class _CNamuPage
 {   
     public :
         static uint64_t uniqueID;
-        static CNamuPageMiniMap miniMap;
+        static CNamuPageMiniMap<_CNamuPage> miniMap;
         _CNamuPage (std::string name, std::string target, int64_t stage);
     public :
     private :
@@ -32,8 +30,9 @@ class _CNamuPage
     
     public :
         std::vector<std::string> Traverse(EStep step, std::string result);
+        void Connect (_CNamuPage* current, _CNamuPage* target, int64_t stage);
         bool UpdateShorter(int64_t originalStage, int64_t stage, std::string resultName);
-        bool ResultInsert (int64_t stage, std::string resultName, int64_t *originalStage);
+        bool ResultInsert (int64_t stage, std::string resultName, void*& resultPage);
         bool RouteConfirm (int64_t frontStage, int64_t backStage, std::string name);
 
         _CNamuPage* MoveTarget(EStep step);

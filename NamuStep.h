@@ -11,6 +11,7 @@
 #include "./libs/Thread.h"
 #include <curl/curl.h>
 #include "./dataStructure/NamuPage.h"
+#include "./dataStructure/NamuPageMiniMap.h"
 #include "./dataStructure/ThreadSafeMap.h"
 #include "./dataStructure/ThreadSafeQueue.h"
 #include <thread> //Sleep
@@ -21,7 +22,8 @@
 class CNamuStep
 {
 public:
-    static ThreadSafeQueue <std::tuple <_CNamuPage*, std::string, int64_t>> foundRoute; // currentTarget, binder's name, binder's stage
+    static ThreadSafeQueue <std::pair <_CNamuPage*, _CNamuPage*>> foundRoute; // binder, currentTarget
+    CNamuPageMiniMap<_CNamuPage> miniMap;
     typedef struct 
     {
         std::string target;
