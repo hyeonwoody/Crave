@@ -61,6 +61,11 @@ bool CNamuCenter::validate(std::vector<std::string> tmpResult) {
         return false;
     }
 
+    else if (tmpResult.size() < n_stage)
+    {
+        return false;
+    }
+
     for (const auto& final : finalResult) {
         if (std::equal(final.begin(), final.end(), tmpResult.begin())) {
             return false;
@@ -100,7 +105,10 @@ void CNamuCenter::ThreadMain()
                     finalResult.push_back(tmp);
             }
 
-
+            if (finalResult.size() == n_route)
+            {
+                break;
+            }
             
             int a = 0;
             //RouteConfirm(std::max(stage, originalStage), std::min(originalStage, stage), resultName);
@@ -108,6 +116,22 @@ void CNamuCenter::ThreadMain()
             int xc = 0;
         }
     }
+
+    free (frontStep);
+    free (backStep);
+    
+    this->Close();
+    std::string tmp;
+    for (auto& it : finalResult)
+    {
+        for (auto& itt : it)
+        {
+            tmp += itt + "=>";
+        }
+        std::cout << tmp.substr(0, tmp.length() - 2) << std::endl;
+        tmp.clear();
+    }
+    this->Stop();
 
 #elif _FRONTBACK == 1
     frontStep->Start();

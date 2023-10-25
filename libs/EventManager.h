@@ -13,18 +13,12 @@ enum {
     LOG_LEVEL_INFO,
 };
 
-
-
 class CEventManager
 {
 public:
     void Output (int level, int outputs, const char* session, int outputIndex, const char* buffer);
-    
     void LogExecute (int level, const char* session, int outputIndex, std::string time, const char* buffer);
-
     void LogOutput (int level, int outputs, const char* session, int outputIndex, const char *format, ...);
-    
-    
 };
 
 // #define LOG_CALL (level, s, o, f, ...)
