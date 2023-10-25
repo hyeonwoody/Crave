@@ -15,8 +15,8 @@ int main(int argc, char* argv[]) {
 
     CNamuCenter* namu = new CNamuCenter(argv[1], argv[2], NUM_OF_ROUTES, NUM_OF_STAGES);
     namu->m_threadStatus = THREAD_ACTIVE;
-    namu->Start();
     
+    namu->Start();
     while (namu->m_threadStatus != THREAD_INACTIVE)
     {
         

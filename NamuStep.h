@@ -23,7 +23,7 @@
 class CNamuStep : public CBase
 {
 public:
-    static ThreadSafeQueue <std::pair <_CNamuPage*, _CNamuPage*>> foundRoute; // binder, currentTarget
+    static ThreadSafeQueue <_CNamuPage*> foundRoute; // binder, currentTarget
     CNamuPageMiniMap<_CNamuPage> miniMap;
     typedef struct 
     {

@@ -8,7 +8,7 @@
 
 #define _FRONTBACK 2
 
-ThreadSafeQueue<std::pair<_CNamuPage*, _CNamuPage*>> CNamuStep::foundRoute; //target, current
+ThreadSafeQueue<_CNamuPage*> CNamuStep::foundRoute; //target, current
 
 void CNamuCenter::Stop()
 {
@@ -94,8 +94,8 @@ void CNamuCenter::ThreadMain()
     {
         if (!CNamuStep::foundRoute.empty())
         {
-            _CNamuPage* binder = CNamuStep::foundRoute.front().first; //binder
-            _CNamuPage* current = CNamuStep::foundRoute.front().second; // current
+            _CNamuPage* binder = CNamuStep::foundRoute.front(); //binder
+            //_CNamuPage* current = CNamuStep::foundRoute.front().second; // current
             CNamuStep::foundRoute.pop();
             std::vector<std::string> tmp = binder->Traverse();
 
@@ -116,9 +116,6 @@ void CNamuCenter::ThreadMain()
             int xc = 0;
         }
     }
-
-    free (frontStep);
-    free (backStep);
     
     this->Close();
     std::string tmp;
@@ -128,7 +125,7 @@ void CNamuCenter::ThreadMain()
         {
             tmp += itt + "=>";
         }
-        std::cout << tmp.substr(0, tmp.length() - 2) << std::endl;
+        eventManager.LogOutput (LOG_LEVEL_INFO, 1, m_sName, 0, tmp.substr(0, tmp.length() - 2).c_str());
         tmp.clear();
     }
     this->Stop();

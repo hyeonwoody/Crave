@@ -92,7 +92,7 @@ bool CNamuStep::ParseHtml (std::string html)
             {
                 //Found Route
                 //foundRoute.push (std::make_pair<_CNamuPage*, _CNamuPage*> (reinterpret_cast<_CNamuPage*>resultPage, m_current)); // binder, currentTarget
-                foundRoute.push(std::pair<_CNamuPage*, _CNamuPage*>(reinterpret_cast<_CNamuPage*>(resultPage), (_CNamuPage* ) m_current));
+                foundRoute.push((reinterpret_cast<_CNamuPage*>(resultPage)));
                 //m_current->ConfirmRoute();
                 //m_current->Traverse (e_step, result);
             }
