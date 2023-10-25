@@ -8,6 +8,7 @@
 #include <map>
 #include <memory>
 
+#include "./libs/Base.h"
 #include "./libs/Thread.h"
 #include <curl/curl.h>
 #include "./dataStructure/NamuPage.h"
@@ -19,7 +20,7 @@
 #include <random> //Random Time
 #include <tuple>
 
-class CNamuStep
+class CNamuStep : public CBase
 {
 public:
     static ThreadSafeQueue <std::pair <_CNamuPage*, _CNamuPage*>> foundRoute; // binder, currentTarget
@@ -64,10 +65,9 @@ protected:
     bool ParseHtml (std::string html);
 };
 
-class CNamuFrontStep : public CNamuStep, public CThread
+class CNamuFrontStep : virtual public CNamuStep, public CThread
 {
 public:
-
 
     CNamuFrontStep(std::string front) : CThread("FrontStep") 
     {
@@ -75,7 +75,7 @@ public:
         m_currentTarget->target = front;
         m_currentTarget->name = front;
         e_step = FRONTSTEP;
-        m_current = new _CNamuPage (front, front, e_step);
+        m_current = new _CNamuPage (front, front, front, e_step);
 
         m_threadStatus = THREAD_INACTIVE;
         m_currentTarget->historyMap.insert (std::make_pair (front, front));
@@ -99,6 +99,7 @@ public:
             
             if (blockDetection(html))
             {
+                eventManager.LogOutput (LOG_LEVEL_INFO, 1, m_sName, 0, "Block Detected");
                 continue;
             }
 
@@ -125,7 +126,7 @@ public:
 protected:
 };
 
-class CNamuBackStep : public CNamuStep, public CThread
+class CNamuBackStep : virtual public CNamuStep, public CThread
 {
 public:
     CNamuBackStep(std::string back) : CThread ("BackStep")
@@ -134,7 +135,7 @@ public:
         m_currentTarget->target = back;
         m_currentTarget->name = back;
         e_step = BACKSTEP;
-        m_current = new _CNamuPage (back, back, 0);
+        m_current = new _CNamuPage (back, back, back, e_step);
         
         m_threadStatus = THREAD_INACTIVE;
         m_currentTarget->historyMap.insert (std::make_pair (back, back));
@@ -169,6 +170,7 @@ public:
             
             if (blockDetection(html))
             {
+                eventManager.LogOutput (LOG_LEVEL_INFO, 1, m_sName, 0, "Block Detected");
                 continue;
             }
 

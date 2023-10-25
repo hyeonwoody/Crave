@@ -1,14 +1,15 @@
 
 #include "NamuStep.h"
 #include "libs/Thread.h"
+#include "libs/Base.h"
 
 class CNamuStep;
 
-class CNamuCenter : public CThread
+class CNamuCenter : public CBase, public CThread
 {
 public:
     CNamuCenter (std::string front, const std::string back, size_t routes, size_t stages) : CThread ("NamuCenter"){
-
+        CEventManager eventManager;
         origin = front;
         destination = back;
         
@@ -38,6 +39,7 @@ private:
     size_t n_route;
 
     std::vector<std::vector<std::string>> finalResult;
+    bool validate (std::vector <std::string> tmpResult);
     bool resultAlreadyExist(std::vector <std::string> tmpResult);
     bool checkElement (std::string tmpElement);
     int resultCnt;

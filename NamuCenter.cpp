@@ -55,6 +55,21 @@ bool CNamuCenter::checkElement (std::string tmpElement)
     return false;
 }
 
+bool CNamuCenter::validate(std::vector<std::string> tmpResult) {
+    if (tmpResult.empty())
+    {
+        return false;
+    }
+
+    for (const auto& final : finalResult) {
+        if (std::equal(final.begin(), final.end(), tmpResult.begin())) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool CNamuCenter::resultAlreadyExist(std::vector<std::string> tmpResult) {
     for (const auto& final : finalResult) {
         if (std::equal(final.begin(), final.end(), tmpResult.begin())) {
@@ -77,6 +92,17 @@ void CNamuCenter::ThreadMain()
             _CNamuPage* binder = CNamuStep::foundRoute.front().first; //binder
             _CNamuPage* current = CNamuStep::foundRoute.front().second; // current
             CNamuStep::foundRoute.pop();
+            std::vector<std::string> tmp = binder->Traverse();
+
+            if (validate(tmp))
+            {
+                if ((tmp[0] == origin) && tmp[tmp.size()-1] == destination)
+                    finalResult.push_back(tmp);
+            }
+
+
+            
+            int a = 0;
             //RouteConfirm(std::max(stage, originalStage), std::min(originalStage, stage), resultName);
             //Traverse();
             int xc = 0;

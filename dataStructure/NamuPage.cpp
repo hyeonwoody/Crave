@@ -49,6 +49,38 @@ _CNamuPage* _CNamuPage::MoveTarget (EStep step)
     return tmp;
 }
 
+std::vector<std::string> _CNamuPage::Traverse()
+{
+    _CNamuPage* origin = this;
+    _CNamuPage* destination = this;
+    std::deque <std::string> dqRoute;
+    std::vector <std::string> ret;
+    
+    while (origin->stage != 1)
+    {
+        if (origin->getFirstPrev() == nullptr)
+            return ret;
+        origin = origin->getFirstPrev();
+        dqRoute.push_front (origin->getName());
+    }
+    dqRoute.push_back (destination->getName());
+    while (destination->stage != -1)
+    {
+        if (destination->getFirstPrev() == nullptr)
+            return ret;
+        destination = destination->getFirstNext();
+        dqRoute.push_back (destination->getName());
+    }
+
+    while (!dqRoute.empty())
+    {
+        ret.push_back (dqRoute.front());
+        dqRoute.pop_front();
+    }
+
+    return ret;
+}
+
 std::vector<std::string> _CNamuPage::Traverse(EStep step, std::string result)
 {
     _CNamuPage* origin = this;
@@ -123,22 +155,22 @@ std::vector<std::string> _CNamuPage::Traverse(EStep step, std::string result)
     return value;
 }
 
-void _CNamuPage::Connect (_CNamuPage* current, _CNamuPage* target, int64_t stage)
+void _CNamuPage::Bind (_CNamuPage* target, int64_t stage)
 {
-    if (current->stage < stage)
+    if (stage > 0)
     {
-        if (current->getNext(target->getName()) == nullptr)
+        if (this->getNext(target->getName()) == nullptr)
         {
-            current->addNext (target);
-            target->addPrev (current);
+            this->addNext (target);
+            target->addPrev (this);
         }
     }
-    else if (current-> stage > stage)
+    else if (stage < 0)
     {
-        if (current->getPrev(target->getName()) == nullptr)
+        if (this->getPrev(target->getName()) == nullptr)
         {
             this->addPrev (target);
-            target->addNext (current);
+            target->addNext (this);
         }   
     }
 }
@@ -169,12 +201,12 @@ bool _CNamuPage::ResultInsert (int64_t stage, std::string resultName, void*& res
         if ((stage < 0 && 0 < search->getStage()) || (search->getStage() < 0 && 0 < stage))
         { 
             // Found Route
-            Connect (this, search, stage);
+            this->Bind (search, stage);
             return true;
         }
         else if ((search->getStage()) * stage > 0) // found in the same step
         {
-            Connect (this, search, stage);
+            this->Bind (search, stage);
         }
         else // search == destination
         {
@@ -182,16 +214,17 @@ bool _CNamuPage::ResultInsert (int64_t stage, std::string resultName, void*& res
         return false;
     }
     
-    _CNamuPage* result = new _CNamuPage(resultName, resultName, stage);
+    _CNamuPage* result = new _CNamuPage(resultName, resultName, resultName, stage); //name 
     resultPage = result;
-    Connect (this, result, stage);
+    this->Bind (result, stage);
     return false;
 }
 
-_CNamuPage::_CNamuPage (std::string name, std::string target = "", int64_t stage = 0)
+_CNamuPage::_CNamuPage (std::string name, std::string displayName = "", std::string target = "", int64_t stage = 0)
 {
     this->name = name;
     this->target = target;
+    this->displayName = name;
     this->stage = stage;
     this->id = uniqueID++;
     this->index = 0;

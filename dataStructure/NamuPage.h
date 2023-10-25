@@ -15,7 +15,7 @@ class _CNamuPage
     public :
         static uint64_t uniqueID;
         static CNamuPageMiniMap<_CNamuPage> miniMap;
-        _CNamuPage (std::string name, std::string target, int64_t stage);
+        _CNamuPage (std::string name, std::string displayName, std::string target, int64_t stage);
     public :
     private :
         uint64_t id;
@@ -29,8 +29,9 @@ class _CNamuPage
         std::vector <_CNamuPage*> prev;
     
     public :
+        std::vector<std::string> Traverse();
         std::vector<std::string> Traverse(EStep step, std::string result);
-        void Connect (_CNamuPage* current, _CNamuPage* target, int64_t stage);
+        void Bind (_CNamuPage* target, int64_t stage);
         bool UpdateShorter(int64_t originalStage, int64_t stage, std::string resultName);
         bool ResultInsert (int64_t stage, std::string resultName, void*& resultPage);
         bool RouteConfirm (int64_t frontStage, int64_t backStage, std::string name);
@@ -48,8 +49,16 @@ class _CNamuPage
         _CNamuPage* getNext() const {return this->next[this->index];}
         _CNamuPage* getPrev() const {return this->prev[this->index];}
 
-        _CNamuPage* getFirstNext() const {return this->next[0];}
-        _CNamuPage* getFirstPrev() const {return this->prev[0];}
+        _CNamuPage* getFirstNext() const {
+            if (this->next.empty())
+                return nullptr;
+            return this->next[0];
+        }
+        _CNamuPage* getFirstPrev() const {
+            if (this->prev.empty())
+                return nullptr;
+            return this->prev[0];
+        }
 
         _CNamuPage* getNext(std::string name) const 
         {
@@ -68,8 +77,9 @@ class _CNamuPage
             return nullptr;
         }
         
-        void setName(std::string name) {this->name = name;}
         void setTarget(std::string target) {this->target = target;}
+        void setName(std::string name) {this->name = name;}
+        void setDisplayName(std::string displayName) {this->displayName = displayName;}
         void setStage(int64_t stage) {this->stage = stage;}
         void setPrivateData(void* privateData) {this->privateData = privateData;}
         void setIndex(int64_t index) {this->index = index;}
