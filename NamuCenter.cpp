@@ -125,7 +125,8 @@ void CNamuCenter::ThreadMain()
         {
             tmp += itt + "=>";
         }
-        eventManager.LogOutput (LOG_LEVEL_INFO, 1, m_sName, 0, tmp.substr(0, tmp.length() - 2).c_str());
+        
+        eventManager.LogOutput(LOG_LEVEL_INFO, 1, "NamuCenter", 0, tmp.substr(0, tmp.length() - 2).c_str()); 
         tmp.clear();
     }
     this->Stop();

@@ -8,18 +8,22 @@
 #include <sstream>
 #include <cstdarg>
 
-enum {
-    LOG_LEVEL_ERROR,
-    LOG_LEVEL_INFO,
-};
 
+    enum {
+        LOG_LEVEL_ERROR,
+        LOG_LEVEL_INFO,
+    };
 class CEventManager
 {
 public:
-    void Output (int level, int outputs, const char* session, int outputIndex, const char* buffer);
-    void LogExecute (int level, const char* session, int outputIndex, std::string time, const char* buffer);
-    void LogOutput (int level, int outputs, const char* session, int outputIndex, const char *format, ...);
+
+
+    static void Output (int level, int outputs, const char* session, int outputIndex, const char* buffer);
+    static void LogExecute (int level, const char* session, int outputIndex, std::string time, const char* buffer);
+    static void LogOutput (int level, int outputs, const char* session, int outputIndex, const char *format, ...);
 };
+
+extern class CEventManager eventManager;
 
 // #define LOG_CALL (level, s, o, f, ...)
 //         do {

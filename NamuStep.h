@@ -24,7 +24,7 @@ class CNamuStep : public CBase
 {
 public:
     static ThreadSafeQueue <_CNamuPage*> foundRoute; // binder, currentTarget
-    CNamuPageMiniMap<_CNamuPage> miniMap;
+    static CNamuPageMiniMap<_CNamuPage> miniMap;
     typedef struct 
     {
         std::string target;
@@ -84,6 +84,7 @@ public:
     void ThreadMain() override{
         while (m_threadStatus != THREAD_INACTIVE)
         {
+            std::this_thread::sleep_for(std::chrono::milliseconds(Duration()));
             // std::string url = MakeUrl(m_currentTarget->target);
             // std::string html = GetHtml (url);
             // if (blockDetection(html))
@@ -147,6 +148,7 @@ public:
         
         while (m_threadStatus != THREAD_INACTIVE)
         {
+            std::this_thread::sleep_for(std::chrono::milliseconds(Duration()));
             // std::string url = MakeUrl(m_currentTarget->target);
             // std::string html = GetHtml(url);
 
@@ -170,7 +172,7 @@ public:
             
             if (blockDetection(html))
             {
-                eventManager.LogOutput (LOG_LEVEL_INFO, 1, m_sName, 0, "Block Detected");
+                CEventManager::LogOutput (LOG_LEVEL_INFO, 1, m_sName, 0, "Block Detected");
                 continue;
             }
 

@@ -1,6 +1,8 @@
 
 #include "EventManager.h"
 
+
+
 void CEventManager::LogExecute (int level, const char* session, int outputIndex, std::string time, const char* buffer)
 {
     if (!session)

@@ -3,8 +3,8 @@
 
 #include "NamuCenter.h"
 
-#define NUM_OF_ROUTES 2
-#define NUM_OF_STAGES 4
+#define NUM_OF_ROUTES 100
+#define NUM_OF_STAGES 6
 
 int main(int argc, char* argv[]) {
 
@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
         std::cerr << "Usage: " << argv[0] << " <arg1> <arg2>" << std::endl;
         return 1;
     }
-
+    
     CNamuCenter* namu = new CNamuCenter(argv[1], argv[2], NUM_OF_ROUTES, NUM_OF_STAGES);
     namu->m_threadStatus = THREAD_ACTIVE;
     

@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-
+#include "../libs/Base.h"
 #include "NamuPageMiniMap.h"
 
 enum EStep : int64_t
@@ -19,9 +19,9 @@ class _CNamuPage
     public :
     private :
         uint64_t id;
-        std::string target;
         std::string name;
         std::string displayName;
+        std::string target;
         int64_t stage;
         void* privateData;
         int64_t index;

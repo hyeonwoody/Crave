@@ -46,6 +46,18 @@ _CNamuPage* _CNamuPage::MoveTarget (EStep step)
             break;
         }
     }
+    
+    if (step == FRONTSTEP)
+    {
+        std::cout<<"Front :" << tmp->getDisplayName() << std::endl;
+        //eventManager.LogOutput (LOG_LEVEL_INFO, 1, "FrontStep", 0, ("Found : " + tmp->getDisplayName()).c_str());
+    }
+    else
+    {
+        std::cout<<"Back :" << tmp->getDisplayName() << std::endl;
+        //eventManager.LogOutput (LOG_LEVEL_INFO, 1, "BackStep", 0, ("Found : " + tmp->getDisplayName()).c_str());
+    }
+    
     return tmp;
 }
 
@@ -66,7 +78,7 @@ std::vector<std::string> _CNamuPage::Traverse()
     dqRoute.push_back (destination->getName());
     while (destination->stage != -1)
     {
-        if (destination->getFirstPrev() == nullptr)
+        if (destination->getFirstNext() == nullptr)
             return ret;
         destination = destination->getFirstNext();
         dqRoute.push_back (destination->getName());
@@ -214,7 +226,7 @@ bool _CNamuPage::ResultInsert (int64_t stage, std::string resultName, void*& res
         return false;
     }
     
-    _CNamuPage* result = new _CNamuPage(resultName, resultName, resultName, stage); //name 
+    _CNamuPage* result = new _CNamuPage(resultName, "", resultName, stage); //name 
     resultPage = result;
     this->Bind (result, stage);
     return false;
@@ -223,8 +235,8 @@ bool _CNamuPage::ResultInsert (int64_t stage, std::string resultName, void*& res
 _CNamuPage::_CNamuPage (std::string name, std::string displayName = "", std::string target = "", int64_t stage = 0)
 {
     this->name = name;
-    this->target = target;
     this->displayName = name;
+    this->target = target;
     this->stage = stage;
     this->id = uniqueID++;
     this->index = 0;
