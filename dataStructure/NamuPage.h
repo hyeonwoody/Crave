@@ -60,6 +60,17 @@ class _CNamuPage
             return this->prev[0];
         }
 
+        _CNamuPage* getLastNext() const {
+            if (this->next.empty())
+                return nullptr;
+            return this->next[this->next.size() -1 ];
+        }
+        _CNamuPage* getLastPrev() const {
+            if (this->prev.empty())
+                return nullptr;
+            return this->prev[this->prev.size() - 1];
+        }
+
         _CNamuPage* getNext(std::string name) const 
         {
             for (const auto& nextPage : this->next) {
