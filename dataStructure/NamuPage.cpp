@@ -58,18 +58,15 @@ std::vector<std::string> _CNamuPage::Traverse()
     std::deque <std::string> dqRoute;
     std::vector <std::string> ret;
     
-    while (origin->stage != 1)
-    {
-        if (origin->getFirstPrev() == nullptr)
-            return ret;
+    while (origin->getFirstPrev() != nullptr)
+    {   
         origin = origin->getFirstPrev();
         dqRoute.push_front (origin->getName());
     }
+    
     dqRoute.push_back (destination->getName());
-    while (destination->stage != -1)
+    while (destination->getFirstNext() != nullptr)
     {
-        if (destination->getFirstNext() == nullptr)
-            return ret;
         destination = destination->getFirstNext();
         dqRoute.push_back (destination->getName());
     }
