@@ -86,7 +86,7 @@ bool CNamuStep::ParseHtml (std::string html)
                 }
             }
             void* resultPage = nullptr;
-            if (result != m_current->getName() 
+            if (result != m_current->getName() // for backStep
             && m_current->ResultInsert (m_current->getStage() + e_step, result, resultPage))
             
             {

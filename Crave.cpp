@@ -3,7 +3,7 @@
 
 #include "NamuCenter.h"
 
-#define NUM_OF_ROUTES 2
+#define NUM_OF_ROUTES 10
 #define NUM_OF_STAGES 2
 
 int main(int argc, char* argv[]) {

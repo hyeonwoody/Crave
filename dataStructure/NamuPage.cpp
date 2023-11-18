@@ -2,6 +2,7 @@
 #include <queue>
 #include <stack>
 #include "NamuPage.h"
+#include <regex>
 
 uint64_t _CNamuPage::uniqueID = 0;
 CNamuPageMiniMap<_CNamuPage> _CNamuPage::miniMap;
@@ -79,6 +80,8 @@ std::vector<std::string> _CNamuPage::Traverse()
 
     return ret;
 }
+
+
 
 std::vector<std::string> _CNamuPage::Traverse(EStep step, std::string result)
 {
@@ -184,17 +187,45 @@ bool _CNamuPage::RouteConfirm (int64_t frontStage, int64_t backStage, std::strin
     
 }
 
-bool _CNamuPage::ResultInsert (int64_t stage, std::string resultName, void*& resultPage)
+bool Validate (const std::string& resultName)
+{
+    if ((resultName.find ("분류:") != std::string::npos)
+        ||(resultName.find("/") != std::string::npos)
+        )
+    {
+        return false;
+    }
+
+    std::regex datePattern(R"((\d{1,2}월)?(\d{1,2}일)?(\d{4}년)?)");
+    if (std::regex_match(resultName, datePattern))
+    {
+        return false;
+    }
+    return true;
+}
+
+/**
+ * @brief Inserts new page to page double linked list.
+ * This function inserts a result into the _CNamuPage and checks if it represents a route.
+ * If a route is found, it binds the current page to the found route.
+ * @param stage The stage from orgin or destination.
+ * @param resultName new page's name.
+ * @param resultPage new page to be insert.
+ * @throws if validation fails.
+ * @note None.
+ * @see calculateFactorialIterative() for an alternative non-recursive implementation.
+ * @return True if a route is found, false otherwise.
+ */
+bool _CNamuPage::ResultInsert (int64_t stage, std::string resultName, void*& resultPage) //if return true, it mean found Route
 {   
 
-    if ((resultName.find ("분류:") != std::string::npos)
-        ||(resultName.find("/") != std::string::npos))
+    if (!Validate(resultName)) //if validation fails, throws.
     {
         return false;
     }
 
     _CNamuPage* search = miniMap.find(resultName);
-    if (search != nullptr)
+    if (search != nullptr) // if the result already exist.
     {
         resultPage = search;
         if ((stage < 0 && 0 < search->getStage()) || (search->getStage() < 0 && 0 < stage))
@@ -210,12 +241,14 @@ bool _CNamuPage::ResultInsert (int64_t stage, std::string resultName, void*& res
         else // search == destination
         {
         }
-        return false;
     }
-    
-    _CNamuPage* result = new _CNamuPage(resultName, "", resultName, stage); //name 
-    resultPage = result;
-    this->Bind (result, stage);
+    else // if the result does not exist insert new page.
+    {
+        _CNamuPage* result = new _CNamuPage(resultName, "", resultName, stage); //name 
+        resultPage = result;
+        this->Bind (result, stage);
+        
+    }
     return false;
 }
 
