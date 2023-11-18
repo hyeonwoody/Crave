@@ -99,13 +99,12 @@ bool CNamuStep::ParseHtml (std::string html)
         }
         searchStart = match.suffix().first;
     }
-
     std::regex hrefRegey("href=['\"]/backlink/([^'\"]+)['\"][^>]*>Next");
     if (std::regex_search(searchStart, html.cend(), match, hrefRegey)){
         if (match.size() == 2){
             std::string input = match[1];
             
-            if (input.find("?from=") != std::string::npos)
+            if (input.find("?from=") != std::string::npos) //if there is next baclink links
             {
                 m_current->setTarget(input);
                 return true;
@@ -117,6 +116,7 @@ bool CNamuStep::ParseHtml (std::string html)
 
 std::string CNamuStep::_GetHtml (std::string url)  {
 
+    eventManager.LogOutput (LOG_LEVEL_INFO, m_sName, __FUNCTION__, 0, m_current->getDisplayName().c_str());
 
     
     CurlBuffer* html = new CurlBuffer ();

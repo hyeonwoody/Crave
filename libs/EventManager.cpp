@@ -3,14 +3,14 @@
 
 
 
-void CEventManager::LogExecute (int level, const char* session, int outputIndex, std::string time, const char* buffer)
+void CEventManager::LogExecute (int level, const char* session, const char* func, int outputIndex, std::string time, const char* buffer)
 {
     if (!session)
         session = "NoName";
 
-    std::cout << time << " " << session << " : " <<  buffer << std::endl;
+    std::cout << time << " " << session << " : " << func << " : " <<  buffer << std::endl;
 }
-void CEventManager::Output (int level, int outputs, const char* session, int outputIndex, const char* buffer)
+void CEventManager::Output (int level, const char* session, const char* func, int outputIndex, const char* buffer)
 {
     auto t = std::time(nullptr);
     auto tm = *std::localtime(&t);
@@ -18,10 +18,10 @@ void CEventManager::Output (int level, int outputs, const char* session, int out
     std::ostringstream oss;
     oss << std::put_time (&tm, "%Y-%m-%d %H:%M:%S");
     std::string time = oss.str();
-    LogExecute (level, session, outputIndex, time, buffer);
+    LogExecute (level, session, func, outputIndex, time, buffer);
 }
 
-void CEventManager::LogOutput (int level, int outputs, const char* session, int outputIndex, const char *format, ...)
+void CEventManager::LogOutput (int level, const char* session, const char* func, int outputIndex, const char *format, ...)
 {
     char buffer[MAX_LOG_MESSAGE];
 
@@ -33,6 +33,6 @@ void CEventManager::LogOutput (int level, int outputs, const char* session, int 
 
     if (0 <= len && len < MAX_LOG_MESSAGE -1)
     {
-        Output (level, outputs, session, outputIndex, buffer);
+        Output (level, session, func, outputIndex, buffer);
     }
 }

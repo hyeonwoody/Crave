@@ -20,11 +20,24 @@
 #include <random> //Random Time
 #include <tuple>
 
-class CNamuStep : public CBase
+class CNamuStep : virtual public CBase, virtual public CThread
 {
 public:
     static ThreadSafeQueue <_CNamuPage*> foundRoute; // binder, currentTarget
     static CNamuPageMiniMap<_CNamuPage> miniMap;
+
+    CNamuStep (std::string target) : CThread(NULL) 
+    {
+        m_currentTarget = new NamuPage();
+        m_currentTarget->target = target;
+        m_currentTarget->name = target;
+        
+        m_current = new _CNamuPage (target, target, target, e_step);
+
+        m_threadStatus = THREAD_INACTIVE;
+        m_currentTarget->historyMap.insert (std::make_pair (target, target));
+    }
+
     typedef struct 
     {
         std::string target;
@@ -65,20 +78,13 @@ protected:
     bool ParseHtml (std::string html);
 };
 
-class CNamuFrontStep : virtual public CNamuStep, public CThread
+class CNamuFrontStep : virtual public CNamuStep
 {
 public:
 
-    CNamuFrontStep(std::string front) : CThread("FrontStep") 
+    CNamuFrontStep(std::string front) : CNamuStep (front), CThread("FrontStep") 
     {
-        m_currentTarget = new NamuPage();
-        m_currentTarget->target = front;
-        m_currentTarget->name = front;
         e_step = FRONTSTEP;
-        m_current = new _CNamuPage (front, front, front, e_step);
-
-        m_threadStatus = THREAD_INACTIVE;
-        m_currentTarget->historyMap.insert (std::make_pair (front, front));
     }
 
     void ThreadMain() override{
@@ -100,7 +106,7 @@ public:
             
             if (blockDetection(html))
             {
-                eventManager.LogOutput (LOG_LEVEL_INFO, 1, m_sName, 0, "Block Detected");
+                eventManager.LogOutput (LOG_LEVEL_INFO, m_sName, __FUNCTION__, 0, "Block Detected");
                 continue;
             }
 
@@ -127,20 +133,16 @@ public:
 protected:
 };
 
-class CNamuBackStep : virtual public CNamuStep, public CThread
+class CNamuBackStep : virtual public CNamuStep
 {
 public:
-    CNamuBackStep(std::string back) : CThread ("BackStep")
+
+    CNamuBackStep(std::string back) : CNamuStep (back), CThread("BackStep") 
     {
-        m_currentTarget = new NamuPage();
-        m_currentTarget->target = back;
-        m_currentTarget->name = back;
         e_step = BACKSTEP;
-        m_current = new _CNamuPage (back, back, back, e_step);
-        
-        m_threadStatus = THREAD_INACTIVE;
-        m_currentTarget->historyMap.insert (std::make_pair (back, back));
     }
+
+
     //virtual bool Delete ();
 
     virtual void ThreadMain() override {
@@ -172,7 +174,7 @@ public:
             
             if (blockDetection(html))
             {
-                CEventManager::LogOutput (LOG_LEVEL_INFO, 1, m_sName, 0, "Block Detected");
+                eventManager.LogOutput (LOG_LEVEL_INFO, m_sName, __FUNCTION__, 0, "Block Detected");
                 continue;
             }
 

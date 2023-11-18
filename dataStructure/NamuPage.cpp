@@ -47,16 +47,6 @@ _CNamuPage* _CNamuPage::MoveTarget (EStep step)
         }
     }
     
-    if (step == FRONTSTEP)
-    {
-        std::cout<<"Front :" << tmp->getDisplayName() << std::endl;
-        //eventManager.LogOutput (LOG_LEVEL_INFO, 1, "FrontStep", 0, ("Found : " + tmp->getDisplayName()).c_str());
-    }
-    else
-    {
-        std::cout<<"Back :" << tmp->getDisplayName() << std::endl;
-        //eventManager.LogOutput (LOG_LEVEL_INFO, 1, "BackStep", 0, ("Found : " + tmp->getDisplayName()).c_str());
-    }
     
     return tmp;
 }
