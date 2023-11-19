@@ -196,8 +196,14 @@ bool Validate (const std::string& resultName)
         return false;
     }
 
-    std::regex datePattern(R"((\d{1,2}월)?(\d{1,2}일)?(\d{4}년)?)");
+    std::regex datePattern(R"((\d{4}년)?(\d{1,2}월)?(\d{1,2}일)?)");
     if (std::regex_match(resultName, datePattern))
+    {
+        return false;
+    }
+
+    std::regex dateWithSpacePattern(R"((\d{1,2}월)? (\d{1,2}일)?)");
+    if (std::regex_match(resultName, dateWithSpacePattern))
     {
         return false;
     }

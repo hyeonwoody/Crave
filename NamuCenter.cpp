@@ -102,7 +102,21 @@ void CNamuCenter::ThreadMain()
             if (validate(tmp))
             {
                 if ((tmp[0] == origin) && tmp[tmp.size()-1] == destination)
+                {
                     finalResult.push_back(tmp);
+                    if (true)
+                    {
+                        std::string str;
+                        for (auto& it : tmp)
+                        {
+                            str += it + "=>";
+                        }
+                        eventManager.LogOutput(LOG_LEVEL_INFO, m_sName, __FUNCTION__, 0, str.substr(0, str.length() - 2).c_str());
+                        str.clear();
+                    }
+                    
+                }
+                    
             }
 
             if (finalResult.size() == n_route)
@@ -126,7 +140,7 @@ void CNamuCenter::ThreadMain()
             tmp += itt + "=>";
         }
         
-        eventManager.LogOutput(LOG_LEVEL_INFO, m_sName, __FUNCTION__, 0, tmp.substr(0, tmp.length() - 2).c_str()); 
+        eventManager.LogOutput(LOG_LEVEL_INFO, m_sName, __FUNCTION__, 1, tmp.substr(0, tmp.length() - 2).c_str()); 
         tmp.clear();
     }
     this->Stop();
