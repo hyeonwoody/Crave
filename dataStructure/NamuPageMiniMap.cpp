@@ -31,14 +31,16 @@ T* CNamuPageMiniMap<T>::find(std::string name)
 template <typename T>
 void CNamuPageMiniMap<T>::pushElement (T* element)
 {
-    if (element->getStage() > 0)
+    if (element != nullptr)
     {
-        frontMap.push_back(element);
+        if (element->getStage() > 0)
+        {
+            frontMap.push_back(element);
+        }
+        else 
+        {
+            backMap.push_back(element);
+        }
     }
-    else 
-    {
-        backMap.push_back(element);
-    }
-    
 }
 

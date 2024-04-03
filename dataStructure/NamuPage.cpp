@@ -22,9 +22,12 @@ _CNamuPage* _CNamuPage::MoveTarget (EStep step)
             if (!this->next.empty())
             {   
                 tmp = tmp->getNext();
-                if (tmp->getFirstPrev()->increamentIndex(step)) // true if tmp is not the last 
+                if (tmp->getFirstPrev() != nullptr)
                 {
-                    tmp->setIndex(-1); // mark for turning back (BFS)
+                    if (tmp->getFirstPrev()->increamentIndex(step)) // true if tmp is not the last 
+                    {
+                        tmp->setIndex(-1); // mark for turning back (BFS)
+                    }
                 }
             }
             break;
@@ -39,9 +42,12 @@ _CNamuPage* _CNamuPage::MoveTarget (EStep step)
             if (!tmp->prev.empty())
             {
                 tmp = tmp->getPrev();
-                if (tmp->getFirstNext()->increamentIndex(step))
+                if (tmp->getFirstNext() != nullptr)
                 {
-                    tmp->setIndex(-1); // mark for turning back (BFS)
+                    if (tmp->getFirstNext()->increamentIndex(step))
+                    {
+                        tmp->setIndex(-1); // mark for turning back (BFS)
+                    }
                 }
             }
             break;

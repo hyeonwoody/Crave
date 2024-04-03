@@ -15,7 +15,6 @@ class CNamuPageMiniMap
     public :
         CNamuPageMiniMap ()
         {
-            int a = 0;
         }   
     public :
         void pushElement (T* element);
